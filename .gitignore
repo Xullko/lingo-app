@@ -1,0 +1,6 @@
+# Local editor / tool settings
+.claude/
+.vscode/
+.DS_Store
+Thumbs.db
+node_modules/

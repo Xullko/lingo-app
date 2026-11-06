@@ -1,0 +1,1213 @@
+<title>LingoCards</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Charis+SIL&display=swap">
+<style>
+/* Layout: one centred column (max 36rem). German index cards (Karteikarten) on a cool desk;
+   score lives on yellow Ortstafel-style plates; batches run along a U-Bahn-style route line. */
+:root {
+  --bg: #E6EBF0;
+  --surface: #F4F7F9;
+  --card: #FFFFFF;
+  --ink: #132030;
+  --ink-2: #4E5D6D;
+  --line: #C8D2DC;
+  --accent: #1B4F8A;
+  --accent-ink: #FFFFFF;
+  --sign: #F5B800;
+  --sign-ink: #121212;
+  --rule: #DD524D;
+  --mark: rgba(245, 184, 0, .42);
+  --der: #2A66C9;
+  --die: #CC3743;
+  --das: #17885A;
+  --tab-ink: #FFFFFF;
+  --good: #17885A;
+  --good-bg: #E1F3E9;
+  --bad: #CC3743;
+  --bad-bg: #FBE5E7;
+  --warn-bg: #FFF4D2;
+  --boss-bg: #142238;
+  --boss-ink: #EEF2F7;
+  --boss-ink-2: #A9B7C8;
+  --boss-line: #33466A;
+  --boss-tint: rgba(255, 255, 255, .07);
+  --heart: #FF5C6A;
+  --shadow: 0 1px 0 rgba(19, 32, 48, .06), 0 10px 26px -14px rgba(19, 32, 48, .32);
+  --f-sign: "Barlow Condensed", "Bahnschrift", "Arial Narrow", sans-serif;
+  --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
+  --f-ipa: "Charis SIL", "Gentium Book Plus", "Segoe UI", "Lucida Sans Unicode", serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D131A; --surface: #141C26; --card: #1A2430; --ink: #E6ECF2; --ink-2: #9AA9B8; --line: #2B3848;
+    --accent: #6AA5F0; --accent-ink: #08121E; --sign: #F5B800; --sign-ink: #121212; --rule: #E8716C;
+    --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
+    --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-bg: #2F161B; --warn-bg: #2B2410;
+    --boss-bg: #0A1019; --boss-ink: #EEF2F7; --boss-ink-2: #9BAAC0; --boss-line: #2A3A57;
+    --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78;
+    --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .75);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D131A; --surface: #141C26; --card: #1A2430; --ink: #E6ECF2; --ink-2: #9AA9B8; --line: #2B3848;
+  --accent: #6AA5F0; --accent-ink: #08121E; --sign: #F5B800; --sign-ink: #121212; --rule: #E8716C;
+  --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
+  --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-bg: #2F161B; --warn-bg: #2B2410;
+  --boss-bg: #0A1019; --boss-ink: #EEF2F7; --boss-ink-2: #9BAAC0; --boss-line: #2A3A57;
+  --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78;
+  --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .75);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+button { font: inherit; color: inherit; }
+h1, h2, h3 { text-wrap: balance; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.muted { color: var(--ink-2); }
+.small { font-size: .875rem; }
+
+.wrap {
+  max-width: 36rem; margin: 0 auto;
+  padding-block: 20px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: flex; flex-direction: column; gap: 18px;
+}
+
+/* ---------- buttons ---------- */
+.btn {
+  appearance: none; border: 2px solid transparent; border-radius: 10px;
+  padding: 11px 18px; min-height: 48px;
+  font-family: var(--f-sign); font-weight: 700; font-size: 1.05rem; letter-spacing: .06em; text-transform: uppercase;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; transition: transform .08s ease, background-color .15s ease, border-color .15s ease;
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn svg { width: 20px; height: 20px; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--accent); }
+.btn-sign { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink); }
+.btn-ghost-dark { background: transparent; border-color: var(--boss-line); color: var(--boss-ink); }
+.btn-danger { background: var(--bad); color: var(--card); }
+.btn-wide { width: 100%; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 140px; }
+
+/* ---------- masthead ---------- */
+.masthead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.logo { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: clamp(2.1rem, 8vw, 2.6rem); line-height: .9; letter-spacing: .01em; text-transform: uppercase; }
+.logo span { color: var(--accent); }
+.tagline { margin: 6px 0 0; color: var(--ink-2); font-size: .95rem; }
+.mast-right { display: flex; align-items: center; gap: 8px; flex: none; }
+.plate {
+  background: var(--sign); color: var(--sign-ink); border-radius: 8px; padding: 6px 12px 6px;
+  box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink);
+  font-family: var(--f-sign); text-align: center; line-height: 1;
+}
+.plate b { display: block; font-weight: 800; font-size: 1.15rem; letter-spacing: .05em; text-transform: uppercase; }
+.plate span { display: block; margin-top: 3px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.icon-btn { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; cursor: pointer; }
+.icon-btn svg { width: 22px; height: 22px; }
+.icon-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+
+/* ---------- stats ---------- */
+.stats { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 10px; }
+.stat { background: var(--card); border-radius: 10px; padding: 11px 12px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0; box-shadow: var(--shadow); }
+.stat .lbl { font-family: var(--f-sign); font-weight: 700; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.stat b { font-family: var(--f-sign); font-weight: 800; font-size: 2.1rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stat .sub { font-size: .8rem; color: var(--ink-2); }
+.stat-xp { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 3px var(--sign), inset 0 0 0 5px var(--sign-ink), var(--shadow); padding-inline: 14px; }
+.stat-xp .lbl, .stat-xp .sub { color: var(--sign-ink); opacity: .78; }
+.meter { display: block; height: 6px; border-radius: 3px; background: rgba(18, 18, 18, .16); overflow: hidden; margin-top: 5px; }
+.meter i { display: block; height: 100%; background: var(--sign-ink); border-radius: 3px; }
+
+/* ---------- index card (Karteikarte) ---------- */
+.karte { position: relative; background: var(--card); border-radius: 4px 4px 7px 7px; box-shadow: var(--shadow); padding: 13px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.k-head {
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-family: var(--f-sign); font-weight: 600; font-size: .8rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2);
+  padding-bottom: 8px; border-bottom: 2px solid var(--rule);
+}
+.tab {
+  position: absolute; top: -22px; right: 20px; height: 22px; padding: 3px 12px 0; border-radius: 6px 6px 0 0;
+  font-family: var(--f-sign); font-weight: 700; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--tab-ink); background: var(--ink-2);
+}
+.tab-der { background: var(--der); } .tab-die { background: var(--die); } .tab-das { background: var(--das); }
+.tab-next { background: var(--accent); }
+.has-tab { margin-top: 22px; }
+.k-label { font-family: var(--f-sign); font-weight: 700; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.art { font-weight: 600; }
+.art-der { color: var(--der); } .art-die { color: var(--die); } .art-das { color: var(--das); }
+
+.flip { display: grid; perspective: 1400px; padding-top: 22px; cursor: pointer; border-radius: 8px; outline-offset: 4px; -webkit-tap-highlight-color: transparent; }
+.flip-inner { display: grid; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3, .7, .2, 1); }
+.flip.is-flipped .flip-inner { transform: rotateY(180deg); }
+.face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; min-height: 330px; }
+.back { transform: rotateY(180deg); }
+.k-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-block: 6px; }
+.k-word { font-weight: 700; font-size: clamp(1.8rem, 7.5vw, 2.9rem); line-height: 1.08; letter-spacing: -.01em; overflow-wrap: break-word; }
+.k-pos { color: var(--ink-2); font-size: .95rem; padding-bottom: 14px; }
+.k-ipa { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 1.15rem; }
+.ipa { font-family: var(--f-ipa); }
+.ph { color: var(--ink-2); font-style: italic; }
+.k-foot { font-family: var(--f-sign); font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); text-align: center; }
+.k-tr { font-size: 1.65rem; font-weight: 700; line-height: 1.2; padding-bottom: 12px; }
+.k-ex { font-size: 1.2rem; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 12px; }
+.k-exen { color: var(--ink-2); font-size: 1.05rem; }
+mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inherit; padding: 0 2px; }
+.speak { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface); color: var(--accent); cursor: pointer; flex: none; vertical-align: middle; }
+.speak svg { width: 18px; height: 18px; }
+.speak:hover { border-color: var(--accent); }
+
+/* ---------- session ---------- */
+.sbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: center; gap: 10px; padding-block: 10px; margin-top: -10px; background: var(--bg); }
+.x { flex: none; height: 40px; min-width: 40px; padding: 0 10px; border-radius: 10px; border: 2px solid var(--line); background: var(--card); cursor: pointer; font-family: var(--f-sign); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.x.armed { border-color: var(--bad); color: var(--bad); }
+.prog { flex: 1; position: relative; height: 12px; border-radius: 999px; background: var(--line); overflow: hidden; min-width: 0; }
+.prog i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 999px; transition: width .4s ease; }
+.prog.with-boss::after { content: ""; position: absolute; left: 80%; top: 0; bottom: 0; width: 3px; background: var(--bg); }
+.chip { flex: none; font-family: var(--f-sign); font-weight: 700; font-size: .98rem; padding: 7px 10px; border-radius: 8px; background: var(--card); font-variant-numeric: tabular-nums; line-height: 1; }
+.chip-xp { background: var(--sign); color: var(--sign-ink); }
+.stage { display: flex; flex-direction: column; gap: 16px; }
+.phase-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-family: var(--f-sign); font-size: .86rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.phase-head .eyebrow { font-weight: 800; color: var(--ink); }
+.deal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.deal-actions .btn { flex: 1 1 150px; }
+.pips { display: flex; justify-content: center; gap: 6px; }
+.pips span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.pips span.on { background: var(--accent); }
+
+/* ---------- quiz ---------- */
+.qcard { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.qtype { font-family: var(--f-sign); font-weight: 800; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.qprompt { margin: 0; font-size: 1.35rem; font-weight: 600; line-height: 1.35; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.qprompt-de { font-size: 1.5rem; display: block; }
+.qprompt .de { font-weight: 700; color: var(--accent); }
+.qsub { margin: -6px 0 0; color: var(--ink-2); }
+.blank { display: inline-block; min-width: 4.5em; border-bottom: 3px solid var(--accent); line-height: 1.1; text-align: center; }
+.blank.filled { color: var(--good); border-bottom-color: var(--good); min-width: 0; padding-inline: 4px; }
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.opts-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 440px) { .opts:not(.opts-3) { grid-template-columns: 1fr; } }
+.opt { display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 14px; min-height: 56px; min-width: 0; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); cursor: pointer; font-size: 1.06rem; font-weight: 500; }
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt .key { flex: none; width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; font-family: var(--f-sign); font-weight: 700; font-size: .85rem; background: var(--bg); color: var(--ink-2); }
+.opt-t { min-width: 0; overflow-wrap: break-word; }
+.opts-3 .opt { justify-content: center; font-size: 1.35rem; font-weight: 700; }
+.opt.is-wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--ink-2); }
+.opt.is-wrong .opt-t { text-decoration: line-through; }
+.opt.is-right { border-color: var(--good); background: var(--good-bg); }
+.listen-btn { align-self: flex-start; }
+.typeform { display: flex; flex-direction: column; gap: 10px; }
+#ans { font: inherit; font-size: 1.3rem; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+#ans:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--mark); }
+.type-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.type-row .btn { margin-left: auto; }
+.uml { width: 44px; height: 44px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); font-size: 1.15rem; font-weight: 600; cursor: pointer; }
+.uml:hover { border-color: var(--accent); }
+
+.fb { border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border: 2px solid; animation: rise .25s ease-out; }
+.fb p { margin: 0; }
+.fb-good { background: var(--good-bg); border-color: var(--good); }
+.fb-hint { background: var(--warn-bg); border-color: var(--sign); }
+.fb-bad { background: var(--bad-bg); border-color: var(--bad); }
+.fb-title { font-family: var(--f-sign); font-weight: 800; font-size: 1.55rem; line-height: 1.1; text-transform: uppercase; letter-spacing: .03em; display: flex; align-items: baseline; gap: 4px 10px; flex-wrap: wrap; }
+.fb-sub { font-family: var(--f-body); font-weight: 500; font-size: .95rem; text-transform: none; letter-spacing: 0; color: var(--ink-2); }
+.gain { margin-left: auto; background: var(--sign); color: var(--sign-ink); padding: 3px 10px; border-radius: 999px; font-size: 1rem; letter-spacing: .04em; }
+.fb-answer { font-size: 1.25rem; font-weight: 700; }
+.fb-card { color: var(--ink-2); }
+.fb .btn { align-self: stretch; }
+
+/* ---------- boss ---------- */
+.arena { background: var(--boss-bg); color: var(--boss-ink); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); }
+.boss-top { display: flex; align-items: center; gap: 14px; }
+.boss-face { flex: none; width: 76px; height: 76px; display: grid; place-items: center; font-size: 3.2rem; line-height: 1; background: var(--boss-tint); border-radius: 18px; }
+.boss-face.hit { animation: shake .5s ease; }
+.boss-id { min-width: 0; }
+.boss-eyebrow { font-family: var(--f-sign); font-weight: 700; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sign); }
+.boss-name { margin: 2px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.8rem; line-height: 1; text-transform: uppercase; letter-spacing: .02em; }
+.boss-gloss { margin: 4px 0 0; color: var(--boss-ink-2); }
+.boss-meters { display: flex; flex-direction: column; gap: 6px; }
+.hp { height: 14px; border-radius: 999px; background: var(--boss-tint); overflow: hidden; box-shadow: inset 0 0 0 1px var(--boss-line); }
+.hp i { display: block; height: 100%; background: var(--heart); border-radius: 999px; transition: width .5s ease; }
+.meter-row { display: flex; justify-content: space-between; align-items: center; font-family: var(--f-sign); font-weight: 700; letter-spacing: .08em; color: var(--boss-ink-2); }
+.hearts { display: flex; gap: 3px; font-size: 1.35rem; color: var(--heart); letter-spacing: 0; }
+.heart.lost { color: var(--boss-line); }
+.scenario { margin: 0; font-size: 1.1rem; line-height: 1.5; }
+.rules { margin: 0; padding-left: 1.2em; color: var(--boss-ink-2); display: flex; flex-direction: column; gap: 4px; }
+.round { display: flex; flex-direction: column; gap: 4px; }
+.build-prompt { margin: 0; font-size: 1.15rem; }
+.build-prompt b { color: var(--boss-ink); }
+.slots { min-height: 66px; border: 2px dashed var(--boss-line); border-radius: 12px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.slot-ph { color: var(--boss-ink-2); font-size: .95rem; padding-left: 4px; }
+.pool { display: flex; flex-wrap: wrap; gap: 8px; }
+.tile { padding: 10px 14px; border-radius: 8px; border: 0; background: var(--card); color: var(--ink); font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+.tile:disabled { cursor: default; }
+.tile.used { opacity: .18; box-shadow: none; }
+.bmsg { border-radius: 10px; padding: 12px 14px; background: var(--boss-tint); border-left: 4px solid var(--sign); }
+.bmsg b { font-family: var(--f-sign); font-weight: 800; font-size: 1.2rem; letter-spacing: .04em; text-transform: uppercase; margin-right: 6px; }
+.bmsg-miss { border-left-color: var(--heart); }
+.de-line { display: block; margin-top: 4px; font-size: 1.1rem; font-weight: 600; }
+
+/* ---------- results ---------- */
+.results { display: flex; flex-direction: column; gap: 16px; text-align: center; }
+.stamp-wrap { display: grid; place-items: center; padding-block: 22px 6px; }
+.stamp {
+  font-family: var(--f-sign); font-weight: 800; font-size: 2.6rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--die); border: 4px solid currentColor; border-radius: 10px; padding: 6px 18px 6px 26px;
+  box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 5px currentColor;
+  transform: rotate(-7deg); opacity: .92; animation: stamp .5s cubic-bezier(.2, 1.3, .4, 1) both;
+}
+.results h2 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 2rem; text-transform: uppercase; letter-spacing: .03em; }
+.lede { margin: 0; color: var(--ink-2); font-size: 1.05rem; }
+.stars { font-size: 2.4rem; letter-spacing: .18em; color: var(--sign); line-height: 1; }
+.stars .off { color: var(--line); }
+.rstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
+.rstats div { background: var(--card); border-radius: 10px; padding: 12px 8px; box-shadow: var(--shadow); }
+.rstats dt { font-family: var(--f-sign); font-weight: 700; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.rstats dd { margin: 2px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.7rem; font-variant-numeric: tabular-nums; }
+.wlist { list-style: none; margin: 0; padding: 4px 16px; background: var(--card); border-radius: 12px; box-shadow: var(--shadow); text-align: left; }
+.wlist li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.wlist li:last-child { border-bottom: 0; }
+.wlist li span:first-child { font-weight: 700; }
+.wlist li span:last-child { color: var(--ink-2); text-align: right; }
+
+/* ---------- home panels ---------- */
+.next-title { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.9rem; line-height: 1; text-transform: uppercase; letter-spacing: .02em; }
+.next-de { margin: 2px 0 0; color: var(--ink-2); font-size: 1.05rem; font-style: italic; }
+.next-meta { margin: 0; color: var(--ink-2); }
+.next-meta b { color: var(--ink); }
+.panel { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.panel-head h3 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; text-transform: uppercase; letter-spacing: .06em; }
+.panel p { margin: 0; }
+.boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.bx { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.bx-n { font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.bx-bar { width: 100%; height: 58px; border-radius: 6px; background: var(--surface); border: 1.5px solid var(--line); display: flex; align-items: flex-end; overflow: hidden; }
+.bx-bar i { display: block; width: 100%; background: var(--accent); }
+.bx:first-child .bx-bar i { background: var(--bad); }
+.bx:last-child .bx-bar i { background: var(--good); }
+.bx-l { font-family: var(--f-sign); font-weight: 600; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+
+.route { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.stn { position: relative; }
+.stn::before { content: ""; position: absolute; left: 11px; top: 50%; height: 100%; width: 4px; background: var(--line); }
+.stn.done::before { background: var(--accent); }
+.stn:last-child::before { display: none; }
+.stn-btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 9px 4px 9px 0; background: none; border: 0; text-align: left; cursor: pointer; border-radius: 8px; }
+.stn-btn:disabled { cursor: default; }
+.dot { position: relative; z-index: 1; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--card); border: 4px solid var(--line); display: grid; place-items: center; }
+.stn.done .dot { background: var(--accent); border-color: var(--accent); }
+.stn.done .dot::after { content: ""; width: 8px; height: 5px; border-left: 2.5px solid var(--accent-ink); border-bottom: 2.5px solid var(--accent-ink); transform: translateY(-1px) rotate(-45deg); }
+.stn.open .dot { background: var(--sign); border-color: var(--sign-ink); }
+.stn.locked .stn-main, .stn.future .stn-main { opacity: .55; }
+.stn-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.stn-t { font-weight: 600; }
+.stn-de { font-size: .85rem; color: var(--ink-2); }
+.stn-end { flex: none; font-family: var(--f-sign); font-weight: 700; font-size: .92rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.stn.open .stn-end { color: var(--accent); }
+.stn.done .stn-end { color: var(--sign); letter-spacing: .12em; }
+.stn.done .stn-end .off { color: var(--line); }
+.stn-btn:hover:not(:disabled) .stn-t { text-decoration: underline; text-underline-offset: 3px; }
+.future-row { display: flex; align-items: center; gap: 14px; padding: 9px 0; }
+
+.settings label { display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; }
+.settings input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
+.confirm { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bad-bg); }
+.foot { display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); font-size: .85rem; text-align: center; padding-top: 4px; }
+.foot p { margin: 0; }
+
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; max-width: calc(100% - 32px); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; text-align: center; box-shadow: var(--shadow); }
+.toast.show { animation: rise .3s ease-out; }
+
+@keyframes rise { from { transform: translateY(8px); } to { transform: none; } }
+.toast.show { animation-name: toastIn; }
+@keyframes toastIn { from { transform: translate(-50%, 10px); } to { transform: translate(-50%, 0); } }
+@keyframes shake { 0%, 100% { transform: none; } 20% { transform: translateX(-8px) rotate(-6deg); } 40% { transform: translateX(7px) rotate(5deg); } 60% { transform: translateX(-5px) rotate(-3deg); } 80% { transform: translateX(3px); } }
+@keyframes stamp { from { transform: rotate(-7deg) scale(1.9); opacity: 0; } to { transform: rotate(-7deg) scale(1); opacity: .92; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+@media (max-width: 400px) {
+  .stat b { font-size: 1.8rem; }
+  .stats { gap: 8px; }
+  .stat { padding-inline: 10px; }
+  .chip { padding-inline: 8px; }
+}
+</style>
+<div id="app"></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script>
+/* LingoCards word list. Edit, add or remove words here.
+   Each batch = 10 words + a boss. Row format is described just below. */
+/* ------------------------------------------------------------------
+   Deck: cards 1–100 of the 2,000-word core list, 10 themed batches.
+   Each word: [article, word, pos, IPA, phonetic guide, English,
+               example, example translation, form used in example, alt spellings]
+------------------------------------------------------------------- */
+window.LINGO_DATA = [
+  { t: "Greetings & Essentials", de: "Grüße und Grundwörter",
+    boss: { n: "Der Türsteher", g: "the bouncer", e: "🕶️", s: "Saturday night in Berlin. The bouncer at the club door only lets in people who can speak German." },
+    w: [
+      ["", "Hallo", "interj", "haˈloː", "hah-LOH", "hello / hi", "Hallo, wie geht's?", "Hello, how are you?", "Hallo"],
+      ["", "danke", "interj", "ˈdaŋkə", "DAHN-keh", "thank you / thanks", "Danke für den Kaffee!", "Thanks for the coffee!", "Danke"],
+      ["", "bitte", "interj", "ˈbɪtə", "BIT-teh", "please / you're welcome", "Ein Wasser, bitte.", "A water, please.", "bitte"],
+      ["", "ja", "interj", "jaː", "yah", "yes", "Ja, das ist richtig.", "Yes, that is right.", "Ja"],
+      ["", "nein", "interj", "naɪ̯n", "nine", "no", "Nein, danke.", "No, thank you.", "Nein"],
+      ["", "Tschüss", "interj", "tʃʏs", "chüss (round your lips)", "bye", "Tschüss, bis morgen!", "Bye, see you tomorrow!", "Tschüss", ["tschüs"]],
+      ["", "Entschuldigung", "interj", "ɛntˈʃʊldɪɡʊŋ", "ent-SHOOL-dee-goong", "excuse me / sorry", "Entschuldigung, wo ist der Bahnhof?", "Excuse me, where is the train station?", "Entschuldigung"],
+      ["", "Guten Morgen", "phrase", "ˈɡuːtn̩ ˈmɔʁɡn̩", "GOO-ten MOR-gen", "good morning", "Guten Morgen, Anna!", "Good morning, Anna!", "Guten Morgen"],
+      ["", "gut", "adj", "ɡuːt", "goot", "good / well", "Mir geht es gut.", "I am doing well.", "gut"],
+      ["", "sehr", "adv", "zeːɐ̯", "zair", "very", "Das Essen ist sehr gut.", "The food is very good.", "sehr"]
+    ] },
+  { t: "People & Pronouns", de: "Menschen",
+    boss: { n: "Die Schwiegermutter", g: "the mother-in-law", e: "👵", s: "Sunday lunch with your partner's family. Their mother wants to hear about every person in your life." },
+    w: [
+      ["", "ich", "pron", "ɪç", "ish (soft, breathy ch)", "I", "Ich bin Tom.", "I am Tom.", "Ich"],
+      ["", "du", "pron", "duː", "doo", "you (informal)", "Du bist nett.", "You are nice.", "Du"],
+      ["", "er", "pron", "eːɐ̯", "air", "he", "Er ist mein Bruder.", "He is my brother.", "Er"],
+      ["", "sie", "pron", "ziː", "zee", "she / they", "Sie wohnt in Berlin.", "She lives in Berlin.", "Sie"],
+      ["", "wir", "pron", "viːɐ̯", "veer", "we", "Wir lernen Deutsch.", "We are learning German.", "Wir"],
+      ["der", "Mann", "noun", "man", "mahn", "man / husband", "Der Mann trinkt Kaffee.", "The man drinks coffee.", "Mann"],
+      ["die", "Frau", "noun", "fʁaʊ̯", "frow (rhymes with now)", "woman / wife", "Die Frau liest ein Buch.", "The woman is reading a book.", "Frau"],
+      ["das", "Kind", "noun", "kɪnt", "kint", "child", "Das Kind spielt im Garten.", "The child plays in the garden.", "Kind"],
+      ["der", "Freund", "noun", "fʁɔʏ̯nt", "froynt", "friend / boyfriend", "Mein Freund kommt heute.", "My friend is coming today.", "Freund"],
+      ["die", "Familie", "noun", "faˈmiːli̯ə", "fah-MEE-lee-eh", "family", "Meine Familie ist groß.", "My family is big.", "Familie"]
+    ] },
+  { t: "Core Verbs", de: "Wichtige Verben",
+    boss: { n: "Der Verb-Drache", g: "the verb dragon", e: "🐉", s: "A dragon made of conjugations guards the old bridge. Only complete, correct sentences may cross." },
+    w: [
+      ["", "sein", "verb", "zaɪ̯n", "zine", "to be", "Ich bin müde.", "I am tired.", "bin"],
+      ["", "haben", "verb", "ˈhaːbn̩", "HAH-ben", "to have", "Ich habe einen Hund.", "I have a dog.", "habe"],
+      ["", "machen", "verb", "ˈmaxn̩", "MAH-khen", "to do / to make", "Was machst du heute?", "What are you doing today?", "machst"],
+      ["", "gehen", "verb", "ˈɡeːən", "GAY-en", "to go (on foot)", "Wir gehen nach Hause.", "We are going home.", "gehen"],
+      ["", "kommen", "verb", "ˈkɔmən", "KOM-men", "to come", "Kommst du mit?", "Are you coming along?", "Kommst"],
+      ["", "sagen", "verb", "ˈzaːɡn̩", "ZAH-gen", "to say", "Was sagst du?", "What are you saying?", "sagst"],
+      ["", "sehen", "verb", "ˈzeːən", "ZAY-en", "to see", "Ich sehe den Bus.", "I see the bus.", "sehe"],
+      ["", "wissen", "verb", "ˈvɪsn̩", "VISS-en", "to know (a fact)", "Ich weiß es nicht.", "I don't know.", "weiß"],
+      ["", "können", "verb", "ˈkœnən", "KUR-nen (no r)", "can / to be able to", "Kannst du mir helfen?", "Can you help me?", "Kannst"],
+      ["", "wollen", "verb", "ˈvɔlən", "VOL-len", "to want", "Ich will schlafen.", "I want to sleep.", "will"]
+    ] },
+  { t: "Food & Drink", de: "Essen und Trinken",
+    boss: { n: "Der Kellner", g: "the waiter", e: "🤵", s: "A famously grumpy Munich waiter is taking your order. He will not ask twice." },
+    w: [
+      ["das", "Wasser", "noun", "ˈvasɐ", "VAH-ser", "water", "Ich trinke viel Wasser.", "I drink a lot of water.", "Wasser"],
+      ["der", "Kaffee", "noun", "ˈkafe", "KAH-feh", "coffee", "Der Kaffee ist heiß.", "The coffee is hot.", "Kaffee"],
+      ["das", "Brot", "noun", "bʁoːt", "broht", "bread", "Das Brot ist frisch.", "The bread is fresh.", "Brot"],
+      ["", "essen", "verb", "ˈɛsn̩", "ESS-en", "to eat", "Wir essen um sieben Uhr.", "We eat at seven o'clock.", "essen"],
+      ["", "trinken", "verb", "ˈtʁɪŋkn̩", "TRINK-en", "to drink", "Was möchtest du trinken?", "What would you like to drink?", "trinken"],
+      ["der", "Apfel", "noun", "ˈapfl̩", "AHP-fel", "apple", "Der Apfel ist rot.", "The apple is red.", "Apfel"],
+      ["die", "Milch", "noun", "mɪlç", "milsh (soft ch)", "milk", "Ich nehme Milch in den Kaffee.", "I take milk in my coffee.", "Milch"],
+      ["der", "Käse", "noun", "ˈkɛːzə", "KAY-zeh", "cheese", "Der Käse kommt aus der Schweiz.", "The cheese comes from Switzerland.", "Käse"],
+      ["das", "Frühstück", "noun", "ˈfʁyːʃtʏk", "FRÜH-shtük", "breakfast", "Das Frühstück ist fertig.", "Breakfast is ready.", "Frühstück"],
+      ["", "lecker", "adj", "ˈlɛkɐ", "LEK-er", "tasty / delicious", "Die Suppe ist lecker!", "The soup is delicious!", "lecker"]
+    ] },
+  { t: "At Home", de: "Zu Hause",
+    boss: { n: "Der Hausmeister", g: "the caretaker", e: "🧹", s: "The building caretaker caught you carrying boxes up the stairs. Explain your new place to him." },
+    w: [
+      ["das", "Haus", "noun", "haʊ̯s", "house", "house", "Das Haus ist alt.", "The house is old.", "Haus"],
+      ["die", "Wohnung", "noun", "ˈvoːnʊŋ", "VOH-noong", "apartment / flat", "Die Wohnung hat drei Zimmer.", "The apartment has three rooms.", "Wohnung"],
+      ["das", "Zimmer", "noun", "ˈtsɪmɐ", "TSIM-er", "room", "Mein Zimmer ist klein.", "My room is small.", "Zimmer"],
+      ["die", "Küche", "noun", "ˈkʏçə", "KÜ-kheh (soft ch)", "kitchen", "Wir kochen in der Küche.", "We cook in the kitchen.", "Küche"],
+      ["das", "Bett", "noun", "bɛt", "bet", "bed", "Das Bett ist sehr bequem.", "The bed is very comfortable.", "Bett"],
+      ["der", "Tisch", "noun", "tɪʃ", "tish", "table", "Das Buch liegt auf dem Tisch.", "The book is on the table.", "Tisch"],
+      ["der", "Stuhl", "noun", "ʃtuːl", "shtool", "chair", "Der Stuhl ist neu.", "The chair is new.", "Stuhl"],
+      ["die", "Tür", "noun", "tyːɐ̯", "tüer (round your lips)", "door", "Mach bitte die Tür zu.", "Please close the door.", "Tür"],
+      ["das", "Fenster", "noun", "ˈfɛnstɐ", "FEN-ster", "window", "Das Fenster ist offen.", "The window is open.", "Fenster"],
+      ["", "wohnen", "verb", "ˈvoːnən", "VOH-nen", "to live (reside)", "Ich wohne in Hamburg.", "I live in Hamburg.", "wohne"]
+    ] },
+  { t: "Time", de: "Die Zeit",
+    boss: { n: "Die Kuckucksuhr", g: "the cuckoo clock", e: "🕰️", s: "Deep in the Black Forest, a cursed cuckoo clock will only stop calling if you talk about time." },
+    w: [
+      ["", "heute", "adv", "ˈhɔʏ̯tə", "HOY-teh", "today", "Heute ist Montag.", "Today is Monday.", "Heute"],
+      ["", "morgen", "adv", "ˈmɔʁɡn̩", "MOR-gen", "tomorrow", "Morgen habe ich frei.", "Tomorrow I have the day off.", "Morgen"],
+      ["", "gestern", "adv", "ˈɡɛstɐn", "GESS-tern", "yesterday", "Gestern war es kalt.", "Yesterday it was cold.", "Gestern"],
+      ["", "jetzt", "adv", "jɛtst", "yetst", "now", "Ich muss jetzt gehen.", "I have to go now.", "jetzt"],
+      ["der", "Tag", "noun", "taːk", "tahk", "day", "Einen schönen Tag!", "Have a nice day!", "Tag"],
+      ["die", "Nacht", "noun", "naxt", "nahkht", "night", "Gute Nacht, schlaf gut!", "Good night, sleep well!", "Nacht"],
+      ["die", "Woche", "noun", "ˈvɔxə", "VOKH-eh", "week", "Die Woche hat sieben Tage.", "The week has seven days.", "Woche"],
+      ["das", "Jahr", "noun", "jaːɐ̯", "yaar", "year", "Das Jahr hat zwölf Monate.", "The year has twelve months.", "Jahr"],
+      ["die", "Zeit", "noun", "tsaɪ̯t", "tsite", "time", "Hast du Zeit?", "Do you have time?", "Zeit"],
+      ["", "immer", "adv", "ˈɪmɐ", "IM-er", "always", "Er ist immer pünktlich.", "He is always on time.", "immer"]
+    ] },
+  { t: "Numbers", de: "Zahlen",
+    boss: { n: "Der Rechenmeister", g: "the math master", e: "🧮", s: "A strict math teacher counts every mistake you make. Count right back at him." },
+    w: [
+      ["", "eins", "num", "aɪ̯ns", "eyns", "one", "Ich nehme Nummer eins.", "I'll take number one.", "eins"],
+      ["", "zwei", "num", "tsvaɪ̯", "tsvy", "two", "Zwei Kaffee, bitte.", "Two coffees, please.", "Zwei"],
+      ["", "drei", "num", "dʁaɪ̯", "dry", "three", "Ich habe drei Kinder.", "I have three children.", "drei"],
+      ["", "vier", "num", "fiːɐ̯", "feer", "four", "Wir sind vier Personen.", "We are four people.", "vier"],
+      ["", "fünf", "num", "fʏnf", "fünf (round your lips)", "five", "Es ist fünf Uhr.", "It is five o'clock.", "fünf"],
+      ["", "sechs", "num", "zɛks", "zeks", "six", "Der Zug kommt um sechs.", "The train comes at six.", "sechs"],
+      ["", "sieben", "num", "ˈziːbn̩", "ZEE-ben", "seven", "Das Kind ist sieben Jahre alt.", "The child is seven years old.", "sieben"],
+      ["", "acht", "num", "axt", "ahkht", "eight", "Ich arbeite acht Stunden.", "I work eight hours.", "acht"],
+      ["", "neun", "num", "nɔʏ̯n", "noyn", "nine", "Der Film beginnt um neun.", "The film starts at nine.", "neun"],
+      ["", "zehn", "num", "tseːn", "tsayn", "ten", "Das kostet zehn Euro.", "That costs ten euros.", "zehn"]
+    ] },
+  { t: "Daily Routine", de: "Der Alltag",
+    boss: { n: "Der Montagmorgen", g: "Monday morning", e: "⏰", s: "Monday morning has come for you. Fight your way through the daily routine." },
+    w: [
+      ["", "aufstehen", "verb", "ˈaʊ̯fˌʃteːən", "OWF-shtay-en", "to get up", "Ich stehe um sechs Uhr auf.", "I get up at six o'clock.", "stehe"],
+      ["", "schlafen", "verb", "ˈʃlaːfn̩", "SHLAH-fen", "to sleep", "Das Baby schläft.", "The baby is sleeping.", "schläft"],
+      ["", "arbeiten", "verb", "ˈaʁbaɪ̯tn̩", "AR-bye-ten", "to work", "Sie arbeitet im Büro.", "She works in the office.", "arbeitet"],
+      ["", "lernen", "verb", "ˈlɛʁnən", "LAIR-nen", "to learn / to study", "Ich lerne jeden Tag Deutsch.", "I learn German every day.", "lerne"],
+      ["", "kaufen", "verb", "ˈkaʊ̯fn̩", "KOW-fen", "to buy", "Ich kaufe Brot im Supermarkt.", "I buy bread at the supermarket.", "kaufe"],
+      ["", "kochen", "verb", "ˈkɔxn̩", "KOKH-en", "to cook", "Mein Vater kocht gern.", "My father likes to cook.", "kocht"],
+      ["", "lesen", "verb", "ˈleːzn̩", "LAY-zen", "to read", "Ich lese die Zeitung.", "I read the newspaper.", "lese"],
+      ["", "spielen", "verb", "ˈʃpiːlən", "SHPEE-len", "to play", "Die Kinder spielen Fußball.", "The children play soccer.", "spielen"],
+      ["", "brauchen", "verb", "ˈbʁaʊ̯xn̩", "BROW-khen", "to need", "Ich brauche einen Stift.", "I need a pen.", "brauche"],
+      ["", "fahren", "verb", "ˈfaːʁən", "FAH-ren", "to drive / to go (by vehicle)", "Wir fahren mit dem Zug.", "We are going by train.", "fahren"]
+    ] },
+  { t: "Travel & City", de: "Unterwegs",
+    boss: { n: "Der Schaffner", g: "the train conductor", e: "🎫", s: "The conductor on the Intercity wants your ticket and some directions. Answer before the next stop." },
+    w: [
+      ["die", "Stadt", "noun", "ʃtat", "shtaht", "city / town", "Die Stadt ist sehr schön.", "The city is very beautiful.", "Stadt"],
+      ["die", "Straße", "noun", "ˈʃtʁaːsə", "SHTRAH-seh", "street / road", "Die Straße ist lang.", "The street is long.", "Straße"],
+      ["der", "Bahnhof", "noun", "ˈbaːnˌhoːf", "BAHN-hohf", "train station", "Der Bahnhof ist dort drüben.", "The train station is over there.", "Bahnhof"],
+      ["der", "Zug", "noun", "tsuːk", "tsook", "train", "Der Zug hat Verspätung.", "The train is delayed.", "Zug"],
+      ["das", "Auto", "noun", "ˈaʊ̯to", "OW-toh", "car", "Das Auto steht vor dem Haus.", "The car is parked in front of the house.", "Auto"],
+      ["der", "Bus", "noun", "bʊs", "booss", "bus", "Der Bus kommt gleich.", "The bus is coming soon.", "Bus"],
+      ["das", "Hotel", "noun", "hoˈtɛl", "ho-TEL", "hotel", "Das Hotel ist im Zentrum.", "The hotel is in the center.", "Hotel"],
+      ["", "links", "adv", "lɪŋks", "links", "left", "Gehen Sie hier links.", "Go left here.", "links"],
+      ["", "rechts", "adv", "ʁɛçts", "rekhts (soft ch)", "right (direction)", "Der Bahnhof ist rechts.", "The train station is on the right.", "rechts"],
+      ["", "wo", "adv", "voː", "voh", "where", "Wo ist die Toilette?", "Where is the restroom?", "Wo"]
+    ] },
+  { t: "Describing Things", de: "Eigenschaften",
+    boss: { n: "Das Adjektiv-Monster", g: "the adjective monster", e: "👾", s: "The last boss of this deck feeds on bland sentences. Describe the world in color to beat it." },
+    w: [
+      ["", "groß", "adj", "ɡʁoːs", "grohss", "big / tall", "Das Haus ist groß.", "The house is big.", "groß"],
+      ["", "klein", "adj", "klaɪ̯n", "kline", "small / little", "Die Katze ist klein.", "The cat is small.", "klein"],
+      ["", "neu", "adj", "nɔʏ̯", "noy", "new", "Ich habe ein neues Handy.", "I have a new phone.", "neues"],
+      ["", "alt", "adj", "alt", "ahlt", "old", "Mein Opa ist achtzig Jahre alt.", "My grandpa is eighty years old.", "alt"],
+      ["", "schön", "adj", "ʃøːn", "shurn (no r, round lips)", "beautiful / nice", "Das Wetter ist schön.", "The weather is nice.", "schön"],
+      ["", "heiß", "adj", "haɪ̯s", "hice", "hot", "Im Sommer ist es heiß.", "It is hot in summer.", "heiß"],
+      ["", "kalt", "adj", "kalt", "kahlt", "cold", "Das Wasser ist kalt.", "The water is cold.", "kalt"],
+      ["", "teuer", "adj", "ˈtɔʏ̯ɐ", "TOY-er", "expensive", "Das Hotel ist zu teuer.", "The hotel is too expensive.", "teuer"],
+      ["", "billig", "adj", "ˈbɪlɪç", "BILL-ish", "cheap", "Das Brot ist billig.", "The bread is cheap.", "billig"],
+      ["", "schnell", "adj", "ʃnɛl", "shnell", "fast / quick", "Der Zug fährt schnell.", "The train goes fast.", "schnell"]
+    ] }
+];
+</script>
+<script>
+(function () {
+"use strict";
+
+const DATA = window.LINGO_DATA;
+
+const W = [];
+DATA.forEach((b, bi) => b.w.forEach((r, k) => W.push({
+  id: bi * 10 + k, n: bi * 10 + k + 1, b: bi, a: r[0], w: r[1], p: r[2], ipa: r[3], ph: r[4],
+  en: r[5], x: r[6], xe: r[7], f: r[8], alt: r[9] || []
+})));
+
+const GOAL = 2000;
+const POS = { noun: "noun", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", interj: "interjection", phrase: "phrase", num: "number" };
+const GENDER = { der: "masculine", die: "feminine", das: "neuter" };
+const PRAISE = [["Super!", "Great!"], ["Sehr gut!", "Very good!"], ["Genau!", "Exactly!"], ["Prima!", "Nice one!"], ["Toll!", "Brilliant!"], ["Wunderbar!", "Wonderful!"], ["Richtig!", "Correct!"]];
+const TYPE_LABEL = { mcDE: "Multiple choice", mcEN: "Multiple choice", listen: "Listening", fill: "Fill in the blank", type: "Quick translation", article: "der, die or das?" };
+const ICON_SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_SET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h3M12 17h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9.5" cy="17" r="2.3" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+
+/* ---------- helpers ---------- */
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const full = w => (w.a ? w.a + " " : "") + w.w;
+const fmt = n => n.toLocaleString("en-US");
+const level = xp => Math.floor(xp / 100) + 1;
+function norm(s) {
+  return String(s).toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    .replace(/[.,!?¿¡;:"“”„'’]/g, "").replace(/\s+/g, " ").trim();
+}
+function lev(a, b) {
+  if (Math.abs(a.length - b.length) > 1) return 2;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    prev = cur;
+  }
+  return prev[b.length];
+}
+const toTop = () => { try { window.scrollTo(0, 0); } catch (e) {} };
+
+/* ---------- speech ---------- */
+const canSpeak = typeof window.speechSynthesis !== "undefined" && typeof window.SpeechSynthesisUtterance !== "undefined";
+let deVoice = null;
+function pickVoice() {
+  try {
+    const vs = window.speechSynthesis.getVoices() || [];
+    const de = vs.filter(v => /^de([-_]|$)/i.test(v.lang));
+    deVoice = de.find(v => /google|natural|online/i.test(v.name)) || de[0] || null;
+  } catch (e) { deVoice = null; }
+}
+if (canSpeak) { pickVoice(); try { window.speechSynthesis.addEventListener("voiceschanged", pickVoice); } catch (e) {} }
+function speak(text) {
+  if (!canSpeak || !text) return;
+  try {
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "de-DE"; if (deVoice) u.voice = deVoice; u.rate = 0.88;
+    window.speechSynthesis.speak(u);
+  } catch (e) {}
+}
+const speakBtn = text => canSpeak ? `<button type="button" class="speak" data-act="speak" data-say="${esc(text)}" aria-label="Play pronunciation">${ICON_SPK}</button>` : "";
+
+/* ---------- progress: this browser first, then your account when the viewer offers it ---------- */
+const KEY = "lingocards:de-en:v1";
+function fresh() { return { v: 1, xp: 0, streak: 0, best: 0, words: {}, batches: {}, auto: true, updatedAt: 0 }; }
+function normalize(p) {
+  const f = fresh();
+  if (!p || typeof p !== "object") return f;
+  return Object.assign(f, p, { words: Object.assign({}, p.words || {}), batches: Object.assign({}, p.batches || {}) });
+}
+function loadLocal() { try { const s = localStorage.getItem(KEY); return s ? normalize(JSON.parse(s)) : null; } catch (e) { return null; } }
+function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} }
+let P = loadLocal() || fresh();
+
+const remote = { ref: null, state: "local", pushing: false, again: false, timer: null, retried: false };
+function save() { P.updatedAt = Date.now(); saveLocal(); scheduleRemote(); }
+function scheduleRemote() { if (!remote.ref) return; clearTimeout(remote.timer); remote.timer = setTimeout(pushRemote, 1200); }
+async function pushRemote() {
+  if (!remote.ref) return;
+  if (remote.pushing) { remote.again = true; return; }
+  remote.pushing = true;
+  try { await remote.ref.set(JSON.parse(JSON.stringify(P))); remote.state = "synced"; remote.retried = false; }
+  catch (e) {
+    if (e && e.code === "unavailable" && !remote.retried) { remote.retried = true; setTimeout(scheduleRemote, 1500 + Math.random() * 2000); }
+    else { remote.state = "local"; remote.ref = null; }
+  }
+  remote.pushing = false; renderSync();
+  if (remote.again) { remote.again = false; pushRemote(); }
+}
+async function initRemote() {
+  const c = window.claude;
+  if (!c || typeof c.use !== "function") return;
+  try {
+    const [db, user] = await Promise.all([c.use("db"), c.use("user")]);
+    if (!db || !user) return;
+    const id = await user.id();
+    if (!id) return;
+    const ref = db.doc("data/users/" + id + "/progress");
+    remote.state = "syncing"; renderSync();
+    const slow = setTimeout(() => { if (remote.state === "syncing") { remote.state = "slow"; renderSync(); } }, 10000);
+    const snap = await ref.get();
+    clearTimeout(slow);
+    remote.ref = ref;
+    const theirs = snap.exists ? snap.data() : null;
+    if (theirs && (theirs.updatedAt || 0) > (P.updatedAt || 0)) {
+      P = normalize(JSON.parse(JSON.stringify(theirs)));
+      saveLocal();
+      if (view === "home") render();
+    } else if (P.updatedAt && (!theirs || (P.updatedAt || 0) > (theirs.updatedAt || 0))) {
+      pushRemote();
+    }
+    remote.state = "synced"; renderSync();
+  } catch (e) { remote.state = "local"; remote.ref = null; renderSync(); }
+}
+function syncText() {
+  return ({
+    local: "Progress is saved in this browser.",
+    syncing: "Loading your saved progress…",
+    slow: "Your account can't be reached yet. Progress is saved in this browser for now.",
+    synced: "Progress is saved to your account."
+  })[remote.state] || "";
+}
+function renderSync() { const el = document.getElementById("sync"); if (el) el.textContent = syncText(); }
+
+/* ---------- derived ---------- */
+const wordRec = id => P.words["w" + id];
+function learnedIds() { return W.filter(w => { const r = wordRec(w.id); return r && r.b >= 1; }).map(w => w.id); }
+const batchDone = i => !!(P.batches["b" + i] && P.batches["b" + i].done);
+const unlocked = i => i === 0 || batchDone(i - 1);
+function nextBatch() { for (let i = 0; i < DATA.length; i++) if (!batchDone(i)) return i; return -1; }
+
+/* ---------- toast ---------- */
+let toastT = null;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.hidden = false;
+  el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2600);
+}
+function addXP(n) {
+  const before = level(P.xp);
+  P.xp += n;
+  if (level(P.xp) > before) toast("Level " + level(P.xp) + " erreicht! You reached level " + level(P.xp) + ".");
+}
+function bumpStreak() {
+  P.streak++;
+  if (P.streak > P.best) P.best = P.streak;
+  if (S) S.runBest = Math.max(S.runBest || 0, P.streak);
+  if ([5, 10, 15, 20, 30, 50, 75, 100].includes(P.streak)) toast("🔥 " + P.streak + " in a row! " + P.streak + "er-Serie!");
+}
+function recordWord(id, ok) {
+  const r = Object.assign({ b: 0, s: 0, c: 0, t: 0 }, wordRec(id) || {});
+  r.s++; r.t = Date.now();
+  if (ok) { r.c++; r.b = Math.min(5, Math.max(1, r.b) + 1); } else r.b = 1;
+  P.words["w" + id] = r;
+}
+
+/* ---------- state ---------- */
+let view = "home";
+let S = null;
+const ui = { settings: false, confirmReset: false, quitArmed: false };
+let quitT = null;
+
+/* ---------- question building ---------- */
+function typesFor(w) {
+  const t = ["mcDE", "mcEN", "fill", "type"];
+  if (w.p === "noun") t.push("article");
+  if (deVoice) t.push("listen");
+  return t;
+}
+function assignTypes(ids) {
+  const used = [];
+  return ids.map(id => {
+    const all = typesFor(W[id]);
+    let pool = all.filter(t => !used.includes(t));
+    if (!pool.length) pool = all;
+    const t = shuffle(pool)[0]; used.push(t); return t;
+  });
+}
+function otherType(q) { const all = typesFor(W[q.id]).filter(t => t !== q.type); return shuffle(all)[0] || "mcDE"; }
+function caseLike(v, ref, x) {
+  if (!v || x.p === "noun") return v;
+  const up = ref[0] !== ref[0].toLowerCase();
+  return (up ? v[0].toUpperCase() : v[0].toLowerCase()) + v.slice(1);
+}
+function pickDistractors(w, fn, n, samePos) {
+  const out = [], seen = new Set([norm(fn(w))]);
+  const pools = [
+    W.filter(x => x.b === w.b && x.id !== w.id && (!samePos || x.p === w.p)),
+    W.filter(x => x.id !== w.id && (!samePos || x.p === w.p)),
+    W.filter(x => x.id !== w.id)
+  ];
+  for (const pool of pools) for (const x of shuffle(pool)) {
+    const v = fn(x), k = norm(v);
+    if (!seen.has(k)) { seen.add(k); out.push(v); if (out.length === n) return out; }
+  }
+  return out;
+}
+function buildQ(id, type, retry) {
+  const w = W[id];
+  const q = { id, type, retry: !!retry, tries: 0, disabled: [], done: false, last: "", played: false };
+  if (type === "mcDE") { q.answer = w.en; q.options = shuffle([w.en].concat(pickDistractors(w, x => x.en, 3, false))); }
+  else if (type === "mcEN" || type === "listen") { q.answer = full(w); q.options = shuffle([full(w)].concat(pickDistractors(w, full, 3, true))); }
+  else if (type === "fill") { q.answer = w.f; q.options = shuffle([w.f].concat(pickDistractors(w, x => caseLike(x.f, w.f, x), 3, true))); }
+  else if (type === "article") { q.answer = w.a; q.options = ["der", "die", "das"]; }
+  return q;
+}
+function buildQueue(ids) { const types = assignTypes(ids); return ids.map((id, i) => buildQ(id, types[i], false)); }
+
+function checkTyped(w, input) {
+  let s = norm(input), art = null;
+  const m = s.match(/^(der|die|das) (.+)$/);
+  if (m && w.p === "noun") { art = m[1]; s = m[2]; }
+  const targets = [w.w].concat(w.alt).map(norm);
+  let res = targets.includes(s) ? "ok" : (targets[0].length >= 5 && targets.some(t => lev(t, s) <= 1)) ? "typo" : "no";
+  if (res !== "no" && art && art !== w.a) res = "article";
+  return res;
+}
+function hintText(q) {
+  const w = W[q.id];
+  const letters = w.w.replace(/\s/g, "").length;
+  switch (q.type) {
+    case "mcDE": return "Picture it in a sentence: „" + w.x + "“";
+    case "mcEN": return "It sounds like “" + w.ph + "”.";
+    case "listen": return "The word you heard means “" + w.en + "”.";
+    case "fill": return "The missing word starts with “" + w.f[0] + "” and has " + w.f.length + " letters.";
+    case "type": return "It starts with “" + w.w[0] + "”, has " + letters + " letters" + (/\s/.test(w.w) ? " in two words" : "") + ", and sounds like “" + w.ph + "”.";
+    case "article": {
+      const s = w.w.toLowerCase();
+      if (/(ung|heit|keit|schaft|ion|ie)$/.test(s)) return "Nouns ending in -ung, -heit, -keit, -ion or -ie are almost always die.";
+      if (/(chen|lein)$/.test(s)) return "Nouns ending in -chen or -lein are always das.";
+      return "Think back to the card's tab: blue is der, red is die, green is das.";
+    }
+  }
+  return "";
+}
+function answerText(q) {
+  const w = W[q.id];
+  if (q.type === "mcDE") return w.en;
+  if (q.type === "article") return w.a + " " + w.w;
+  if (q.type === "fill") return w.x;
+  return full(w);
+}
+
+/* ---------- flow ---------- */
+function startBatch(bi) {
+  const ids = DATA[bi].w.map((_, k) => bi * 10 + k);
+  S = { mode: "batch", bi, sets: [ids.slice(0, 3), ids.slice(3, 6), ids.slice(6)], set: 0, phase: "deal", deal: 0, flipped: false,
+        queue: [], qi: 0, fb: null, done: 0, total: ids.length, first: 0, xp0: P.xp, runBest: 0, boss: null, result: null };
+  view = "session"; ui.quitArmed = false; render(); toTop(); autoSpeakCard();
+}
+function startReview() {
+  const ids = learnedIds().sort((a, b) => (wordRec(a).b - wordRec(b).b) || ((wordRec(a).t || 0) - (wordRec(b).t || 0))).slice(0, 6);
+  if (ids.length < 3) return;
+  S = { mode: "review", ids, phase: "quiz", queue: buildQueue(shuffle(ids)), qi: 0, fb: null, done: 0, total: ids.length, first: 0, xp0: P.xp, runBest: 0, result: null };
+  view = "session"; ui.quitArmed = false; render(); toTop();
+}
+function autoSpeakCard() {
+  if (!P.auto || !S || S.phase !== "deal") return;
+  speak(full(W[S.sets[S.set][S.deal]]));
+}
+function flip() {
+  if (!S || S.phase !== "deal") return;
+  S.flipped = !S.flipped;
+  const el = document.querySelector(".flip");
+  if (el) {
+    el.classList.toggle("is-flipped", S.flipped);
+    el.querySelector(".front").inert = S.flipped;
+    el.querySelector(".back").inert = !S.flipped;
+  }
+  const b = document.querySelector('.btn[data-act="flip"]');
+  if (b) b.textContent = S.flipped ? "Show front" : "Flip card";
+}
+function beginQuiz() { S.phase = "quiz"; S.queue = buildQueue(S.sets[S.set]); S.qi = 0; S.fb = null; render(); toTop(); }
+function submit(value) {
+  const q = S.queue[S.qi];
+  if (!q || q.done) return;
+  const w = W[q.id];
+  const res = q.type === "type" ? checkTyped(w, String(value || "")) : (q.options[value] === q.answer ? "ok" : "no");
+  if (res === "ok" || res === "typo") {
+    q.done = true;
+    const firstTry = q.tries === 0;
+    const gain = firstTry ? 10 : 5;
+    addXP(gain);
+    if (firstTry) bumpStreak();
+    if (!q.retry) { S.done++; if (firstTry) S.first++; recordWord(q.id, firstTry); }
+    if (q.type === "type") q.last = String(value);
+    S.fb = { kind: "good", gain, firstTry, praise: PRAISE[Math.floor(Math.random() * PRAISE.length)], typo: res === "typo" };
+    if (P.auto) speak(full(w));
+  } else {
+    P.streak = 0;
+    q.tries++;
+    if (typeof value === "number") q.disabled.push(value);
+    if (q.type === "type") q.last = String(value);
+    if (q.tries >= 2) {
+      q.done = true;
+      if (!q.retry) { S.done++; recordWord(q.id, false); S.queue.push(buildQ(q.id, otherType(q), true)); }
+      S.fb = { kind: "reveal" };
+    } else {
+      S.fb = { kind: "hint", article: res === "article" };
+    }
+  }
+  save(); render();
+}
+function nextQ() {
+  S.fb = null; S.qi++;
+  if (S.qi < S.queue.length) { render(); toTop(); return; }
+  if (S.mode === "review") return finish();
+  if (S.set < S.sets.length - 1) { S.set++; S.phase = "deal"; S.deal = 0; S.flipped = false; render(); toTop(); autoSpeakCard(); return; }
+  startBoss();
+}
+
+/* ---------- boss ---------- */
+const tokens = s => s.replace(/[.,!?¿¡„“"]/g, "").split(/\s+/).filter(Boolean);
+function startBoss() {
+  let c = S.sets.flat().map(id => ({ id, t: tokens(W[id].x), en: W[id].xe, x: W[id].x })).filter(r => r.t.length >= 3 && r.t.length <= 7);
+  c = shuffle(c).sort((a, b) => b.t.length - a.t.length).slice(0, 4);
+  S.boss = { rounds: shuffle(c), r: 0, hp: c.length, max: c.length, hearts: 3, state: "intro", picked: [], pool: [], hint: 0 };
+  setupRound();
+  S.boss.state = "intro";
+  S.phase = "boss"; render(); toTop();
+}
+function setupRound() {
+  const B = S.boss, rd = B.rounds[B.r];
+  let pool = [], tries = 0;
+  do { pool = shuffle(rd.t.map((t, i) => ({ i, t }))); tries++; } while (tries < 25 && pool.map(p => p.t).join(" ") === rd.t.join(" "));
+  B.pool = pool; B.picked = []; B.state = "play"; B.hint = 0;
+}
+function resetBoss() { const B = S.boss; B.rounds = shuffle(B.rounds); B.r = 0; B.hp = B.max; B.hearts = 3; setupRound(); }
+function bossCheck() {
+  const B = S.boss, rd = B.rounds[B.r];
+  if (B.picked.length !== B.pool.length) return;
+  const built = B.picked.map(pi => B.pool[pi].t).join(" ");
+  if (built === rd.t.join(" ")) {
+    B.hp--; addXP(15); bumpStreak();
+    if (B.hp === 0) { B.state = "won"; addXP(50); } else B.state = "hit";
+    speak(rd.x);
+  } else {
+    P.streak = 0; B.hearts--; B.hint++;
+    B.state = B.hearts <= 0 ? "lost" : "miss";
+  }
+  save(); render();
+}
+function finish() {
+  const acc = S.total ? S.first / S.total : 0;
+  const stars = acc >= 0.9 ? 3 : acc >= 0.6 ? 2 : 1;
+  if (S.mode === "batch") {
+    const k = "b" + S.bi, prev = P.batches[k];
+    P.batches[k] = { done: true, stars: Math.max(stars, (prev && prev.stars) || 0) };
+  }
+  S.result = { stars, acc, gained: P.xp - S.xp0 };
+  S.phase = "results"; save(); render(); toTop();
+}
+function goHome() { view = "home"; S = null; ui.quitArmed = false; render(); toTop(); }
+function quit() {
+  if (!S || S.phase === "results" || ui.quitArmed) return goHome();
+  ui.quitArmed = true;
+  const b = document.querySelector(".x");
+  if (b) { b.textContent = "Leave?"; b.classList.add("armed"); b.setAttribute("aria-label", "Tap again to leave this batch"); }
+  clearTimeout(quitT);
+  quitT = setTimeout(() => {
+    ui.quitArmed = false;
+    const x = document.querySelector(".x");
+    if (x) { x.textContent = "✕"; x.classList.remove("armed"); x.setAttribute("aria-label", "Leave batch"); }
+  }, 3000);
+}
+
+/* ---------- views ---------- */
+function starsHTML(n) { return [0, 1, 2].map(i => i < n ? "★" : '<span class="off">★</span>').join(""); }
+
+function homeHTML() {
+  const lv = level(P.xp), into = P.xp % 100;
+  const learned = learnedIds();
+  const nb = nextBatch();
+  const boxes = [0, 0, 0, 0, 0];
+  learned.forEach(id => { boxes[Math.min(5, wordRec(id).b) - 1]++; });
+  const maxBox = Math.max(1, ...boxes);
+  const doneCount = DATA.filter((_, i) => batchDone(i)).length;
+  const voiceNote = !canSpeak ? "This browser has no speech voices, so audio is off."
+    : deVoice ? "Using the German voice “" + deVoice.name + "”." : "No German voice was found in this browser, so words are read by its default voice.";
+
+  const nextBlock = nb >= 0 ? (() => {
+    const b = DATA[nb];
+    const started = b.w.some((_, k) => wordRec(nb * 10 + k));
+    return `<section class="karte has-tab" aria-label="Next batch">
+      <span class="tab tab-next">Next up</span>
+      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
+      <div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
+      <p class="next-meta">Starts with <b>${b.w.slice(0, 3).map(r => esc(r[0] ? r[0] + " " + r[1] : r[1])).join(" · ")}</b>. Three rounds of cards and quizzes, then a boss: <b>${esc(b.boss.n)}</b> ${esc(b.boss.e)}</p>
+      <button class="btn btn-primary btn-wide" data-act="start" data-b="${nb}">${started ? "Play batch " + (nb + 1) + " again from the start" : "Deal the first 3 cards"}</button>
+    </section>`;
+  })() : `<section class="karte has-tab"><span class="tab tab-next">Deck done</span>
+      <div class="k-head"><span>All ${DATA.length} batches</span><span>Cards 1–${W.length}</span></div>
+      <h2 class="next-title">Every card in this deck is learned</h2>
+      <p class="next-meta">Keep reviewing to move cards up to box 5, or replay any batch from the route below.</p></section>`;
+
+  return `<div class="wrap">
+    <header class="masthead">
+      <div><h1 class="logo">Lingo<span>Cards</span></h1><p class="tagline">The 2,000 everyday words, ten at a time</p></div>
+      <div class="mast-right">
+        <div class="plate" aria-label="German to English"><b>Deutsch</b><span>→ English</span></div>
+        <button class="icon-btn" data-act="settings" aria-expanded="${ui.settings}" aria-label="Settings">${ICON_SET}</button>
+      </div>
+    </header>
+    ${ui.settings ? `<section class="panel settings" aria-label="Settings">
+      <div class="panel-head"><h3>Settings</h3></div>
+      <label for="opt-auto"><input type="checkbox" id="opt-auto" ${P.auto ? "checked" : ""} ${canSpeak ? "" : "disabled"}> Read words aloud automatically</label>
+      <p class="muted small">${esc(voiceNote)}</p>
+      ${ui.confirmReset ? `<div class="confirm"><p>Erase all XP, streaks, stars and Leitner boxes? This can't be undone.</p><div class="row"><button class="btn btn-danger" data-act="reset-yes">Erase progress</button><button class="btn btn-ghost" data-act="reset-no">Keep my progress</button></div></div>`
+        : `<button class="btn btn-ghost" data-act="reset">Reset progress</button>`}
+    </section>` : ""}
+    <section class="stats" aria-label="Your progress">
+      <div class="stat stat-xp"><span class="lbl">XP</span><b>${fmt(P.xp)}</b><span class="sub">Level ${lv} · ${into}/100</span><span class="meter"><i style="width:${into}%"></i></span></div>
+      <div class="stat"><span class="lbl">Streak</span><b>${P.streak}</b><span class="sub">Best ${P.best}</span></div>
+      <div class="stat"><span class="lbl">Words</span><b>${learned.length}</b><span class="sub">of ${fmt(GOAL)}</span></div>
+    </section>
+    ${nextBlock}
+    <section class="panel" aria-label="Leitner box">
+      <div class="panel-head"><h3>Karteikasten</h3><span class="muted small">your Leitner box</span></div>
+      <div class="boxes">${boxes.map((c, i) => `<div class="bx"><span class="bx-n">${c}</span><span class="bx-bar"><i style="height:${(c / maxBox) * 100}%"></i></span><span class="bx-l">Box ${i + 1}</span></div>`).join("")}</div>
+      <p class="muted small">A first-try answer moves a card up one box. A miss sends it back to box 1. Review starts with the lowest boxes.</p>
+      ${learned.length >= 3 ? `<button class="btn btn-ghost" data-act="review">Review your ${Math.min(6, learned.length)} weakest cards</button>`
+        : `<p class="small"><b>Finish your first quiz round to unlock review.</b></p>`}
+    </section>
+    <section class="panel" aria-label="Batches">
+      <div class="panel-head"><h3>Your route</h3><span class="muted small">${doneCount} of ${DATA.length} batches done</span></div>
+      <ol class="route">
+        ${DATA.map((b, i) => {
+          const st = P.batches["b" + i], open = unlocked(i);
+          const cls = st && st.done ? "done" : open ? "open" : "locked";
+          return `<li class="stn ${cls}"><button class="stn-btn" data-act="start" data-b="${i}" ${open ? "" : "disabled"}>
+            <span class="dot" aria-hidden="true"></span>
+            <span class="stn-main"><span class="stn-t">${i + 1}. ${esc(b.t)}</span><span class="stn-de">${esc(b.de)} · cards ${i * 10 + 1}–${i * 10 + 10}</span></span>
+            <span class="stn-end">${st && st.done ? `<span aria-label="${st.stars} of 3 stars">${starsHTML(st.stars)}</span>` : open ? "Start" : "Locked"}</span>
+          </button></li>`;
+        }).join("")}
+        <li class="stn future"><div class="future-row"><span class="dot" aria-hidden="true"></span><span class="stn-main"><span class="stn-t">Cards 101–2,000</span><span class="stn-de">Not in this deck yet</span></span></div></li>
+      </ol>
+    </section>
+    <footer class="foot"><p id="sync">${esc(syncText())}</p><p>Pronunciation uses your browser's built-in speech voices.</p></footer>
+  </div>`;
+}
+
+function sbarHTML() {
+  let pct;
+  if (S.mode === "batch") {
+    const bp = S.phase === "results" ? 1 : S.phase === "boss" && S.boss ? (S.boss.max - S.boss.hp) / S.boss.max : 0;
+    pct = (S.done / S.total) * 0.8 + bp * 0.2;
+  } else pct = S.phase === "results" ? 1 : S.done / S.total;
+  return `<div class="sbar">
+    <button class="x ${ui.quitArmed ? "armed" : ""}" data-act="quit" aria-label="Leave batch">${ui.quitArmed ? "Leave?" : "✕"}</button>
+    <div class="prog ${S.mode === "batch" ? "with-boss" : ""}" role="progressbar" aria-label="Batch progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct * 100)}"><i style="width:${pct * 100}%"></i></div>
+    <span class="chip chip-xp" aria-label="${P.xp} XP">${fmt(P.xp)} XP</span>
+    <span class="chip" aria-label="Streak ${P.streak}">🔥 ${P.streak}</span>
+  </div>`;
+}
+
+function cardHTML(w, flipped) {
+  const g = w.a;
+  const tab = g ? `<span class="tab tab-${g}">${g}</span>` : `<span class="tab">${POS[w.p]}</span>`;
+  const head = `<div class="k-head"><span>🎴 Card ${w.n} / ${fmt(GOAL)}</span><span>Category: ${esc(DATA[w.b].t)}</span></div>`;
+  const i = w.x.indexOf(w.f);
+  const ex = i < 0 ? esc(w.x) : esc(w.x.slice(0, i)) + "<mark>" + esc(w.f) + "</mark>" + esc(w.x.slice(i + w.f.length));
+  return `<div class="flip ${flipped ? "is-flipped" : ""}" role="button" tabindex="0" data-act="flip" aria-label="Flashcard. Press to flip.">
+    <div class="flip-inner">
+      <div class="face front karte" ${flipped ? "inert" : ""}>${tab}${head}
+        <div class="k-body">
+          <span class="k-label">Target word</span>
+          <div class="k-word">${g ? `<span class="art art-${g}">${g}</span> ` : ""}${esc(w.w)}</div>
+          <div class="k-pos">${POS[w.p]}${g ? " · " + GENDER[g] : ""}</div>
+          <span class="k-label">Pronunciation</span>
+          <div class="k-ipa"><span class="ipa">[${esc(w.ipa)}]</span><span class="ph">“${esc(w.ph)}”</span>${speakBtn(full(w))}</div>
+        </div>
+        <div class="k-foot">Tap the card to see the meaning</div>
+      </div>
+      <div class="face back karte" ${flipped ? "" : "inert"}>${tab}${head}
+        <div class="k-body">
+          <span class="k-label">Translation</span>
+          <div class="k-tr">${esc(w.en)}</div>
+          <span class="k-label">Example sentence</span>
+          <div class="k-ex"><span>${ex}</span>${speakBtn(w.x)}</div>
+          <span class="k-label">Sentence translation</span>
+          <div class="k-exen">${esc(w.xe)}</div>
+        </div>
+        <div class="k-foot">Tap to flip back</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function dealHTML() {
+  const ids = S.sets[S.set], w = W[ids[S.deal]], last = S.deal === ids.length - 1;
+  return `<div class="phase-head"><span class="eyebrow">New cards · Round ${S.set + 1} of ${S.sets.length}</span><span>Card ${S.deal + 1} of ${ids.length}</span></div>
+    ${cardHTML(w, S.flipped)}
+    <div class="pips" aria-hidden="true">${ids.map((_, i) => `<span class="${i <= S.deal ? "on" : ""}"></span>`).join("")}</div>
+    <div class="deal-actions">
+      <button class="btn btn-ghost" data-act="flip">${S.flipped ? "Show front" : "Flip card"}</button>
+      <button class="btn btn-primary" data-act="${last ? "quiz" : "nextcard"}" data-autofocus>${last ? "Start the quiz" : "Next card"}</button>
+    </div>`;
+}
+
+function promptHTML(q, w) {
+  switch (q.type) {
+    case "mcDE": return `<h2 class="qprompt">What does <span class="de">${esc(full(w))}</span> mean? ${speakBtn(full(w))}</h2>`;
+    case "mcEN": return `<h2 class="qprompt">Which German word means “${esc(w.en)}”?</h2>`;
+    case "listen": return `<h2 class="qprompt">Listen, then pick the word you hear.</h2><button class="btn btn-sign listen-btn" data-act="speak" data-say="${esc(full(w))}">${ICON_SPK} Play the word</button>`;
+    case "fill": {
+      const i = w.x.indexOf(w.f);
+      return `<h2 class="qprompt qprompt-de">${esc(w.x.slice(0, i))}<span class="blank ${q.done ? "filled" : ""}">${q.done ? esc(w.f) : '<span class="sr">blank</span>&nbsp;'}</span>${esc(w.x.slice(i + w.f.length))}</h2><p class="qsub">${esc(w.xe)}</p>`;
+    }
+    case "type": return `<h2 class="qprompt">Type the German for “${esc(w.en)}”</h2>${w.p === "noun" ? '<p class="qsub">The article is optional, but if you add one it has to be right.</p>' : ""}`;
+    case "article": return `<h2 class="qprompt qprompt-de"><span class="blank ${q.done ? "filled" : ""}">${q.done ? esc(w.a) : '<span class="sr">blank</span>&nbsp;'}</span> ${esc(w.w)}</h2><p class="qsub">${esc(w.en)}</p>`;
+  }
+  return "";
+}
+
+function quizHTML() {
+  const q = S.queue[S.qi], w = W[q.id];
+  let body;
+  if (q.options) {
+    body = `<div class="opts ${q.type === "article" ? "opts-3" : ""}">${q.options.map((o, i) => {
+      const wrong = q.disabled.includes(i), right = q.done && o === q.answer;
+      return `<button class="opt ${wrong ? "is-wrong" : ""} ${right ? "is-right" : ""}" data-act="pick" data-i="${i}" ${wrong || q.done ? "disabled" : ""}><span class="key">${i + 1}</span><span class="opt-t">${esc(o)}</span></button>`;
+    }).join("")}</div>`;
+  } else {
+    body = `<form id="typeform" class="typeform" autocomplete="off">
+      <label for="ans" class="sr">Your answer in German</label>
+      <input id="ans" name="ans" type="text" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type in German" value="${esc(q.last)}" ${q.done ? "disabled" : "data-autofocus"}>
+      <div class="type-row">${["ä", "ö", "ü", "ß"].map(c => `<button type="button" class="uml" data-act="uml" data-c="${c}" ${q.done ? "disabled" : ""} aria-label="Insert ${c}">${c}</button>`).join("")}
+        <button class="btn btn-primary" type="submit" ${q.done ? "disabled" : ""}>Check</button></div>
+    </form>`;
+  }
+  const f = S.fb;
+  let fb = "";
+  if (f && f.kind === "good") {
+    fb = `<div class="fb fb-good" role="status"><div class="fb-title">${f.praise[0]} <span class="fb-sub">${f.praise[1]}${f.firstTry ? "" : " (after a hint)"}</span><span class="gain">+${f.gain} XP</span></div>
+      ${f.typo ? `<p>Close enough. Watch the spelling: <b>${esc(w.w)}</b></p>` : ""}
+      <p class="fb-card"><b>${esc(full(w))}</b> means ${esc(w.en)}.</p>
+      <button class="btn btn-primary" data-act="next" data-autofocus>Continue</button></div>`;
+  } else if (f && f.kind === "hint") {
+    fb = `<div class="fb fb-hint" role="status"><div class="fb-title">Nicht ganz <span class="fb-sub">Not quite. Try again for +5 XP.</span></div>
+      <p>${f.article ? "Right word, wrong article. " : ""}Hint: ${esc(hintText(q))}</p></div>`;
+  } else if (f && f.kind === "reveal") {
+    fb = `<div class="fb fb-bad" role="status"><div class="fb-title">Schade! <span class="fb-sub">Too bad. Here's the answer.</span></div>
+      <p class="fb-answer">${esc(answerText(q))}</p>
+      <p class="fb-card"><b>${esc(full(w))}</b> means ${esc(w.en)}. „${esc(w.x)}“ ${esc(w.xe)}</p>
+      ${q.retry ? "" : "<p>This card comes back at the end of the round.</p>"}
+      <button class="btn btn-primary" data-act="next" data-autofocus>Continue</button></div>`;
+  }
+  const head = S.mode === "review" ? "Review" : "Quiz · Round " + (S.set + 1) + " of " + S.sets.length;
+  return `<div class="phase-head"><span class="eyebrow">${head}</span><span>${q.retry ? "Second chance" : "Question " + (S.qi + 1) + " of " + S.queue.length}</span></div>
+    <div class="qcard"><div class="qtype">${TYPE_LABEL[q.type]}</div>${promptHTML(q, w)}${body}</div>${fb}`;
+}
+
+function bossHTML() {
+  const B = S.boss, bd = DATA[S.bi].boss;
+  const hearts = [0, 1, 2].map(i => `<span class="heart ${i < B.hearts ? "" : "lost"}" aria-hidden="true">♥</span>`).join("");
+  const head = `<div class="boss-top"><div class="boss-face ${B.state === "hit" || B.state === "won" ? "hit" : ""}" aria-hidden="true">${bd.e}</div>
+      <div class="boss-id"><span class="boss-eyebrow">Boss battle · Batch ${S.bi + 1}</span><h2 class="boss-name">${esc(bd.n)}</h2><p class="boss-gloss">${esc(bd.g)}</p></div></div>
+    <div class="boss-meters"><div class="hp" role="img" aria-label="Boss health ${B.hp} of ${B.max}"><i style="width:${(B.hp / B.max) * 100}%"></i></div>
+      <div class="meter-row"><span>HP ${B.hp}/${B.max}</span><span class="hearts" role="img" aria-label="${B.hearts} of 3 hearts left">${hearts}</span></div></div>`;
+  if (B.state === "intro") {
+    return `<div class="arena">${head}<p class="scenario">${esc(bd.s)}</p>
+      <ul class="rules"><li>Build ${B.max} German sentences from this batch's cards.</li><li>Each correct sentence hits for 1 HP and earns 15 XP.</li><li>A wrong word order costs a heart. Lose all 3 and the boss wins.</li><li>Win to earn a 50 XP bonus and finish the batch.</li></ul>
+      <button class="btn btn-sign btn-wide" data-act="boss-start" data-autofocus>Start the battle</button></div>`;
+  }
+  const rd = B.rounds[B.r];
+  if (B.state === "lost") {
+    return `<div class="arena">${head}<div class="bmsg bmsg-miss" role="status"><b>Verloren</b> ${esc(bd.n)} wins this time. The sentence was:<span class="de-line">„${esc(rd.x)}“</span></div>
+      <div class="row"><button class="btn btn-sign" data-act="rematch" data-autofocus>Rematch</button><button class="btn btn-ghost-dark" data-act="home">Back to the route</button></div></div>`;
+  }
+  const live = B.state === "play" || B.state === "miss";
+  const slots = B.picked.length ? B.picked.map((pi, pos) => `<button class="tile" data-act="unpick" data-pos="${pos}" ${live ? "" : "disabled"} aria-label="Remove ${esc(B.pool[pi].t)}">${esc(B.pool[pi].t)}</button>`).join("")
+    : `<span class="slot-ph">Tap the words below in the right order</span>`;
+  const pool = B.pool.map((p, pi) => { const used = B.picked.includes(pi); return `<button class="tile ${used ? "used" : ""}" data-act="pickt" data-pi="${pi}" ${used || !live ? "disabled" : ""}>${esc(p.t)}</button>`; }).join("");
+  let msg = "";
+  if (B.state === "miss") msg = `<div class="bmsg bmsg-miss" role="status"><b>Daneben!</b> Missed, and you lost a heart. Hint: it starts with „${esc(rd.t.slice(0, Math.min(B.hint, rd.t.length - 1)).join(" "))} …“</div>`;
+  if (B.state === "hit") msg = `<div class="bmsg" role="status"><b>Treffer!</b> A hit for 1 HP and 15 XP.<span class="de-line">„${esc(rd.x)}“</span></div>`;
+  if (B.state === "won") msg = `<div class="bmsg" role="status"><b>Besiegt!</b> ${esc(bd.n)} is defeated. You earn 15 XP plus the 50 XP boss bonus.<span class="de-line">„${esc(rd.x)}“</span></div>`;
+  const actions = B.state === "hit" ? `<button class="btn btn-sign btn-wide" data-act="boss-next" data-autofocus>Next round</button>`
+    : B.state === "won" ? `<button class="btn btn-sign btn-wide" data-act="boss-won" data-autofocus>Claim your reward</button>`
+    : `<div class="row"><button class="btn btn-ghost-dark" data-act="clear" ${B.picked.length ? "" : "disabled"}>Clear</button><button class="btn btn-sign" data-act="attack" ${B.picked.length === B.pool.length ? "" : "disabled"}>Attack</button></div>`;
+  return `<div class="arena">${head}
+    <div class="round"><span class="boss-eyebrow">Round ${B.r + 1} of ${B.max}</span><p class="build-prompt">Say it in German: <b>“${esc(rd.en)}”</b></p></div>
+    <div class="slots" aria-label="Your sentence">${slots}</div>
+    <div class="pool" aria-label="Word tiles">${pool}</div>
+    ${msg}${actions}</div>`;
+}
+
+function resultsHTML() {
+  const r = S.result, batch = S.mode === "batch";
+  const ids = batch ? S.sets.flat() : S.ids;
+  const nb = batch && S.bi + 1 < DATA.length ? S.bi + 1 : -1;
+  return `<div class="results">
+    <div class="stamp-wrap"><div class="stamp">${batch ? "Bestanden" : "Geübt"}</div></div>
+    <h2>${batch ? "Batch " + (S.bi + 1) + " complete" : "Review complete"}</h2>
+    <p class="lede">${batch ? esc(DATA[S.bi].boss.n) + " is defeated, and " + ids.length + " cards are now in your Leitner box." : "Your Leitner box is updated."}</p>
+    <div class="stars" role="img" aria-label="${r.stars} of 3 stars">${starsHTML(r.stars)}</div>
+    <dl class="rstats"><div><dt>XP earned</dt><dd>+${r.gained}</dd></div><div><dt>First try</dt><dd>${S.first}/${S.total}</dd></div><div><dt>Best streak</dt><dd>${S.runBest || 0}</dd></div></dl>
+    <ul class="wlist">${ids.map(id => `<li><span class="${W[id].a ? "art-" + W[id].a : ""}">${esc(full(W[id]))}</span><span>${esc(W[id].en)}</span></li>`).join("")}</ul>
+    <div class="row">${nb >= 0 ? `<button class="btn btn-primary" data-act="start" data-b="${nb}" data-autofocus>Next: batch ${nb + 1}</button>` : ""}
+      <button class="btn btn-ghost" data-act="home" ${nb >= 0 ? "" : "data-autofocus"}>Back to the route</button></div>
+  </div>`;
+}
+
+function sessionHTML() {
+  const inner = S.phase === "deal" ? dealHTML() : S.phase === "quiz" ? quizHTML() : S.phase === "boss" ? bossHTML() : resultsHTML();
+  return `<div class="wrap">${sbarHTML()}<main class="stage">${inner}</main></div>`;
+}
+
+function render() {
+  const app = document.getElementById("app");
+  try { app.innerHTML = view === "session" && S ? sessionHTML() : homeHTML(); }
+  catch (err) { console.error(err); view = "home"; S = null; app.innerHTML = homeHTML(); }
+  const af = app.querySelector("[data-autofocus]:not([disabled])");
+  if (af) { try { af.focus({ preventScroll: true }); } catch (e) {} }
+  if (view === "session" && S && S.phase === "quiz") {
+    const q = S.queue[S.qi];
+    if (q && q.type === "listen" && !q.played) { q.played = true; setTimeout(() => speak(full(W[q.id])), 200); }
+  }
+  if (S && S.fb && (S.fb.kind === "good" || S.fb.kind === "reveal")) {
+    const fbEl = app.querySelector(".fb");
+    if (fbEl && fbEl.scrollIntoView) { try { fbEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {} }
+  }
+}
+
+/* ---------- events ---------- */
+function insertChar(c) {
+  const inp = document.getElementById("ans");
+  if (!inp || inp.disabled) return;
+  const s = inp.selectionStart == null ? inp.value.length : inp.selectionStart;
+  const e = inp.selectionEnd == null ? inp.value.length : inp.selectionEnd;
+  inp.value = inp.value.slice(0, s) + c + inp.value.slice(e);
+  inp.focus(); try { inp.setSelectionRange(s + 1, s + 1); } catch (err) {}
+}
+function act(a, d) {
+  switch (a) {
+    case "settings": ui.settings = !ui.settings; ui.confirmReset = false; render(); break;
+    case "reset": ui.confirmReset = true; render(); break;
+    case "reset-no": ui.confirmReset = false; render(); break;
+    case "reset-yes": { const auto = P.auto; P = fresh(); P.auto = auto; ui.confirmReset = false; save(); render(); toast("Progress erased."); break; }
+    case "start": startBatch(+d.b); break;
+    case "review": startReview(); break;
+    case "speak": speak(d.say); break;
+    case "flip": flip(); break;
+    case "nextcard": S.deal++; S.flipped = false; render(); autoSpeakCard(); break;
+    case "quiz": beginQuiz(); break;
+    case "pick": submit(+d.i); break;
+    case "uml": insertChar(d.c); break;
+    case "next": nextQ(); break;
+    case "boss-start": S.boss.state = "play"; render(); break;
+    case "pickt": { const B = S.boss; if ((B.state === "play" || B.state === "miss") && !B.picked.includes(+d.pi)) { B.picked.push(+d.pi); render(); } break; }
+    case "unpick": { const B = S.boss; if (B.state === "play" || B.state === "miss") { B.picked.splice(+d.pos, 1); render(); } break; }
+    case "clear": S.boss.picked = []; render(); break;
+    case "attack": bossCheck(); break;
+    case "boss-next": S.boss.r++; setupRound(); render(); break;
+    case "boss-won": finish(); break;
+    case "rematch": resetBoss(); render(); break;
+    case "quit": quit(); break;
+    case "home": goHome(); break;
+  }
+}
+const app = document.getElementById("app");
+app.addEventListener("click", e => {
+  const t = e.target.closest("[data-act]");
+  if (!t || t.disabled || !app.contains(t)) return;
+  act(t.dataset.act, t.dataset);
+});
+app.addEventListener("mousedown", e => { if (e.target.closest(".uml")) e.preventDefault(); });
+app.addEventListener("submit", e => {
+  e.preventDefault();
+  if (e.target.id !== "typeform") return;
+  const v = e.target.querySelector("#ans").value;
+  if (v.trim()) submit(v);
+});
+app.addEventListener("change", e => { if (e.target.id === "opt-auto") { P.auto = e.target.checked; save(); } });
+document.addEventListener("keydown", e => {
+  if (view !== "session" || !S || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = (e.target.tagName || "").toLowerCase();
+  if (tag === "input" || tag === "textarea") return;
+  if (S.phase === "deal") {
+    const onCard = e.target.closest && e.target.closest(".flip");
+    if ((e.key === " " || e.key === "Enter") && onCard) { e.preventDefault(); flip(); }
+    else if (e.key === "f" || e.key === "ArrowUp" || e.key === "ArrowDown") { e.preventDefault(); flip(); }
+    else if (e.key === "ArrowRight" && tag !== "button") { const ids = S.sets[S.set]; if (S.deal < ids.length - 1) act("nextcard", {}); else beginQuiz(); }
+  } else if (S.phase === "quiz") {
+    const q = S.queue[S.qi];
+    if (S.fb && (S.fb.kind === "good" || S.fb.kind === "reveal")) { if (e.key === "Enter" && tag !== "button") { e.preventDefault(); nextQ(); } return; }
+    if (q && q.options && /^[1-4]$/.test(e.key)) { const i = +e.key - 1; if (i < q.options.length && !q.disabled.includes(i)) submit(i); }
+  }
+});
+
+/* ---------- boot ---------- */
+function start(data) {
+  try {
+    if (data && data.view === "session" && data.S && data.S.phase) { S = data.S; view = "session"; }
+  } catch (e) { S = null; view = "home"; }
+  render();
+  initRemote();
+}
+try { const h = window.claude && window.claude.hot; if (h && typeof h.snapshot === "function") h.snapshot(() => ({ view, S })); } catch (e) {}
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.ready === "function") hot.ready(start); else start((hot && hot.data) || {});
+})();
+</script>
