@@ -4,8 +4,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Charis+SIL&display=swap">
 <style>
-/* Layout: one centred column (max 36rem). German index cards (Karteikarten) on a cool desk;
-   score lives on yellow Ortstafel-style plates; batches run along a U-Bahn-style route line. */
+/* LingoCards styles.
+   Look: German index cards (Karteikarten) on a cool desk, yellow Ortstafel-style
+   sign plates for score and Premium, a U-Bahn-style route line for batches.
+   Layout: one centered column (max 36rem), sticky top bar, bottom tab bar.
+   Colors are tokens: light values first, then the dark-mode versions. */
 :root {
   --bg: #E6EBF0;
   --surface: #F4F7F9;
@@ -14,8 +17,10 @@
   --ink-2: #4E5D6D;
   --line: #C8D2DC;
   --accent: #1B4F8A;
+  --accent-deep: #0F3560;
   --accent-ink: #FFFFFF;
   --sign: #F5B800;
+  --sign-deep: #B98A00;
   --sign-ink: #121212;
   --rule: #DD524D;
   --mark: rgba(245, 184, 0, .42);
@@ -26,6 +31,7 @@
   --good: #17885A;
   --good-bg: #E1F3E9;
   --bad: #CC3743;
+  --bad-deep: #8F1F29;
   --bad-bg: #FBE5E7;
   --warn-bg: #FFF4D2;
   --boss-bg: #142238;
@@ -34,6 +40,7 @@
   --boss-line: #33466A;
   --boss-tint: rgba(255, 255, 255, .07);
   --heart: #FF5C6A;
+  --overlay: rgba(14, 24, 38, .55);
   --shadow: 0 1px 0 rgba(19, 32, 48, .06), 0 10px 26px -14px rgba(19, 32, 48, .32);
   --f-sign: "Barlow Condensed", "Bahnschrift", "Arial Narrow", sans-serif;
   --f-body: "Barlow", "Segoe UI", system-ui, sans-serif;
@@ -42,25 +49,26 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0D131A; --surface: #141C26; --card: #1A2430; --ink: #E6ECF2; --ink-2: #9AA9B8; --line: #2B3848;
-    --accent: #6AA5F0; --accent-ink: #08121E; --sign: #F5B800; --sign-ink: #121212; --rule: #E8716C;
-    --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
-    --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-bg: #2F161B; --warn-bg: #2B2410;
+    --accent: #6AA5F0; --accent-deep: #2F5F9C; --accent-ink: #08121E; --sign: #F5B800; --sign-deep: #9C7400; --sign-ink: #121212;
+    --rule: #E8716C; --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
+    --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-deep: #A3434C; --bad-bg: #2F161B; --warn-bg: #2B2410;
     --boss-bg: #0A1019; --boss-ink: #EEF2F7; --boss-ink-2: #9BAAC0; --boss-line: #2A3A57;
-    --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78;
+    --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78; --overlay: rgba(0, 0, 0, .65);
     --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .75);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0D131A; --surface: #141C26; --card: #1A2430; --ink: #E6ECF2; --ink-2: #9AA9B8; --line: #2B3848;
-  --accent: #6AA5F0; --accent-ink: #08121E; --sign: #F5B800; --sign-ink: #121212; --rule: #E8716C;
-  --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
-  --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-bg: #2F161B; --warn-bg: #2B2410;
+  --accent: #6AA5F0; --accent-deep: #2F5F9C; --accent-ink: #08121E; --sign: #F5B800; --sign-deep: #9C7400; --sign-ink: #121212;
+  --rule: #E8716C; --mark: rgba(245, 184, 0, .32); --der: #7AAAF5; --die: #F2818A; --das: #4FCB8D; --tab-ink: #0D131A;
+  --good: #4FCB8D; --good-bg: #11291D; --bad: #F2818A; --bad-deep: #A3434C; --bad-bg: #2F161B; --warn-bg: #2B2410;
   --boss-bg: #0A1019; --boss-ink: #EEF2F7; --boss-ink-2: #9BAAC0; --boss-line: #2A3A57;
-  --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78;
+  --boss-tint: rgba(255, 255, 255, .06); --heart: #FF6B78; --overlay: rgba(0, 0, 0, .65);
   --shadow: 0 1px 0 rgba(0, 0, 0, .3), 0 12px 28px -14px rgba(0, 0, 0, .75);
   color-scheme: dark;
 }
+:root[data-theme="light"] { color-scheme: light; }
 
 * { box-sizing: border-box; }
 body {
@@ -70,71 +78,130 @@ body {
 }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
 button { font: inherit; color: inherit; }
+a { color: var(--accent); }
 h1, h2, h3 { text-wrap: balance; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .muted { color: var(--ink-2); }
 .small { font-size: .875rem; }
+.center { text-align: center; }
+svg { flex: none; }
 
-.wrap {
+.wrap, .view {
   max-width: 36rem; margin: 0 auto;
-  padding-block: 20px 64px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
   display: flex; flex-direction: column; gap: 18px;
 }
+.wrap { padding-block: 20px 64px; }
+.view { padding-block: 18px calc(100px + env(safe-area-inset-bottom, 0px)); }
+.view.enter { animation: viewIn .3s ease-out; }
 
-/* ---------- buttons ---------- */
-.btn {
-  appearance: none; border: 2px solid transparent; border-radius: 10px;
-  padding: 11px 18px; min-height: 48px;
-  font-family: var(--f-sign); font-weight: 700; font-size: 1.05rem; letter-spacing: .06em; text-transform: uppercase;
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  cursor: pointer; transition: transform .08s ease, background-color .15s ease, border-color .15s ease;
+/* ---------- top bar + tab bar ---------- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 6; background: var(--bg); border-bottom: 1px solid var(--line); }
+.topbar-in {
+  max-width: 36rem; margin: 0 auto; padding-block: 9px; display: flex; align-items: center; gap: 10px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
-.btn:active:not(:disabled) { transform: translateY(1px); }
-.btn:disabled { opacity: .45; cursor: not-allowed; }
-.btn svg { width: 20px; height: 20px; }
-.btn-primary { background: var(--accent); color: var(--accent-ink); }
-.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
-.btn-ghost:hover:not(:disabled) { border-color: var(--accent); }
-.btn-sign { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink); }
-.btn-ghost-dark { background: transparent; border-color: var(--boss-line); color: var(--boss-ink); }
-.btn-danger { background: var(--bad); color: var(--card); }
-.btn-wide { width: 100%; }
-.row { display: flex; gap: 10px; flex-wrap: wrap; }
-.row > .btn { flex: 1 1 140px; }
-
-/* ---------- masthead ---------- */
-.masthead { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.logo { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: clamp(2.1rem, 8vw, 2.6rem); line-height: .9; letter-spacing: .01em; text-transform: uppercase; }
-.logo span { color: var(--accent); }
-.tagline { margin: 6px 0 0; color: var(--ink-2); font-size: .95rem; }
-.mast-right { display: flex; align-items: center; gap: 8px; flex: none; }
+.brand { border: 0; background: none; padding: 0; cursor: pointer; font-family: var(--f-sign); font-weight: 800; font-size: 1.5rem; line-height: 1; letter-spacing: .01em; text-transform: uppercase; color: var(--ink); }
+.brand span { color: var(--accent); }
+.tb-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.pro-chip {
+  display: inline-flex; align-items: center; gap: 5px; border: 0; border-radius: 8px; padding: 7px 10px;
+  font-family: var(--f-sign); font-weight: 800; font-size: .86rem; letter-spacing: .08em; text-transform: uppercase; line-height: 1;
+  background: var(--sign); color: var(--sign-ink);
+}
+.pro-chip svg { width: 15px; height: 15px; }
+.pro-chip-up { cursor: pointer; box-shadow: 0 2px 0 var(--sign-deep); }
+.pro-chip-up:active { transform: translateY(1px); box-shadow: 0 1px 0 var(--sign-deep); }
+.avatar-btn { border: 0; padding: 0; background: none; cursor: pointer; border-radius: 50%; display: grid; }
+.avatar { display: inline-grid; place-items: center; border-radius: 50%; color: #FFFFFF; font-family: var(--f-sign); font-weight: 800; letter-spacing: .02em; flex: none; }
+.avatar.guest { background: var(--surface); color: var(--ink-2); border: 2px dashed var(--line); }
+.avatar.guest svg { width: 55%; height: 55%; }
 .plate {
-  background: var(--sign); color: var(--sign-ink); border-radius: 8px; padding: 6px 12px 6px;
+  background: var(--sign); color: var(--sign-ink); border-radius: 8px; padding: 6px 12px;
   box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink);
   font-family: var(--f-sign); text-align: center; line-height: 1;
 }
 .plate b { display: block; font-weight: 800; font-size: 1.15rem; letter-spacing: .05em; text-transform: uppercase; }
 .plate span { display: block; margin-top: 3px; font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-.icon-btn { width: 44px; height: 44px; border-radius: 10px; border: 2px solid var(--line); background: var(--card); display: grid; place-items: center; cursor: pointer; }
-.icon-btn svg { width: 22px; height: 22px; }
-.icon-btn[aria-expanded="true"] { border-color: var(--accent); color: var(--accent); }
+.plate-sm { padding: 4px 8px; border-radius: 6px; box-shadow: inset 0 0 0 1.5px var(--sign), inset 0 0 0 3px var(--sign-ink); }
+.plate-sm b { font-size: .82rem; } .plate-sm span { font-size: .6rem; margin-top: 1px; }
+@media (max-width: 380px) { .plate-sm { display: none; } }
 
-/* ---------- stats ---------- */
-.stats { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: 10px; }
-.stat { background: var(--card); border-radius: 10px; padding: 11px 12px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0; box-shadow: var(--shadow); }
-.stat .lbl { font-family: var(--f-sign); font-weight: 700; font-size: .78rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
-.stat b { font-family: var(--f-sign); font-weight: 800; font-size: 2.1rem; line-height: 1.05; font-variant-numeric: tabular-nums; }
-.stat .sub { font-size: .8rem; color: var(--ink-2); }
-.stat-xp { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 3px var(--sign), inset 0 0 0 5px var(--sign-ink), var(--shadow); padding-inline: 14px; }
-.stat-xp .lbl, .stat-xp .sub { color: var(--sign-ink); opacity: .78; }
-.meter { display: block; height: 6px; border-radius: 3px; background: rgba(18, 18, 18, .16); overflow: hidden; margin-top: 5px; }
-.meter i { display: block; height: 100%; background: var(--sign-ink); border-radius: 3px; }
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 6; background: var(--card); border-top: 1px solid var(--line);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  box-shadow: 0 -8px 24px -18px rgba(0, 0, 0, .4);
+}
+.tabbar-in { max-width: 36rem; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); }
+.tab-btn {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 4px 10px;
+  background: none; border: 0; cursor: pointer; color: var(--ink-2);
+  font-family: var(--f-sign); font-weight: 700; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase;
+}
+.tab-btn svg { width: 24px; height: 24px; transition: transform .15s ease; }
+.tab-btn:hover svg { transform: translateY(-1px); }
+.tab-btn.on { color: var(--accent); }
+.tab-btn.on::before { content: ""; position: absolute; top: -1px; left: 26%; right: 26%; height: 4px; border-radius: 0 0 4px 4px; background: var(--sign); }
+
+/* ---------- buttons ---------- */
+.btn {
+  appearance: none; border: 2px solid transparent; border-radius: 11px;
+  padding: 11px 18px; min-height: 48px;
+  font-family: var(--f-sign); font-weight: 700; font-size: 1.05rem; letter-spacing: .06em; text-transform: uppercase;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+  cursor: pointer; transition: transform .08s ease, box-shadow .08s ease, background-color .15s ease, border-color .15s ease;
+}
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn svg { width: 20px; height: 20px; }
+.btn-primary { background: var(--accent); color: var(--accent-ink); box-shadow: 0 3px 0 var(--accent-deep); }
+.btn-primary:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--accent-deep); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover:not(:disabled) { border-color: var(--accent); }
+.btn-ghost:active:not(:disabled) { transform: translateY(1px); }
+.btn-sign { background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink), 0 3px 0 var(--sign-deep); }
+.btn-sign:active:not(:disabled) { transform: translateY(2px); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink), 0 1px 0 var(--sign-deep); }
+.btn-ghost-dark { background: transparent; border-color: var(--boss-line); color: var(--boss-ink); }
+.btn-danger { background: var(--bad); color: var(--card); box-shadow: 0 3px 0 var(--bad-deep); }
+.btn-wide { width: 100%; }
+.btn-big { min-height: 56px; font-size: 1.2rem; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.row > .btn { flex: 1 1 140px; }
+.link-btn { border: 0; background: none; padding: 0 4px; cursor: pointer; color: var(--accent); font-family: var(--f-body); font-size: .9rem; font-weight: 600; text-transform: none; letter-spacing: 0; text-decoration: underline; text-underline-offset: 3px; vertical-align: middle; }
+
+/* ---------- headings ---------- */
+.view-title { margin: 4px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 2.3rem; line-height: 1; text-transform: uppercase; letter-spacing: .01em; }
+.view-title .de { display: block; margin-top: 5px; font-family: var(--f-body); font-style: italic; font-weight: 500; font-size: 1rem; text-transform: none; letter-spacing: 0; color: var(--ink-2); }
+.lede-left, .note-line { margin: -6px 0 0; color: var(--ink-2); }
+.note-line { color: var(--ink); font-weight: 600; padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); margin: 0; }
+
+/* ---------- learn: greeting + today ---------- */
+.hello { display: flex; flex-direction: column; gap: 3px; }
+.hello .date { margin: 0; font-family: var(--f-sign); font-weight: 700; font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
+.hello h1 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: clamp(2.1rem, 8.5vw, 2.8rem); line-height: .95; text-transform: uppercase; }
+.hello h1 span { color: var(--accent); }
+.hello p { margin: 4px 0 0; color: var(--ink-2); }
+.today { display: grid; grid-template-columns: auto 1fr; gap: 18px; align-items: center; background: var(--card); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); }
+.ring { width: 112px; height: 112px; position: relative; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring svg circle { transition: stroke-dasharray .6s ease; }
+.ring-c { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+.ring-c b { font-family: var(--f-sign); font-weight: 800; font-size: 1.9rem; font-variant-numeric: tabular-nums; }
+.ring-c span { margin-top: 3px; font-family: var(--f-sign); font-weight: 600; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+.minis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; margin: 0; min-width: 0; }
+.mini { min-width: 0; }
+.mini dt, .stat-grid dt, .rstats dt { font-family: var(--f-sign); font-weight: 700; font-size: .76rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.mini dd { margin: 1px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.55rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.mini dd small { font-size: .9rem; font-weight: 600; color: var(--ink-2); }
+.mini-wide { grid-column: 1 / -1; }
+.lvl { display: flex; align-items: center; gap: 10px; }
+.bar { flex: 1; display: block; height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); border-radius: 4px; transition: width .5s ease; }
 
 /* ---------- index card (Karteikarte) ---------- */
-.karte { position: relative; background: var(--card); border-radius: 4px 4px 7px 7px; box-shadow: var(--shadow); padding: 13px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
+.karte { position: relative; background: var(--card); border-radius: 4px 4px 8px 8px; box-shadow: var(--shadow); padding: 13px 18px 18px; display: flex; flex-direction: column; gap: 12px; }
 .k-head {
   display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   font-family: var(--f-sign); font-weight: 600; font-size: .8rem; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-2);
@@ -147,16 +214,28 @@ h1, h2, h3 { text-wrap: balance; }
 }
 .tab-der { background: var(--der); } .tab-die { background: var(--die); } .tab-das { background: var(--das); }
 .tab-next { background: var(--accent); }
+.tab-pro { background: var(--sign); color: var(--sign-ink); }
 .has-tab { margin-top: 22px; }
+.next-pro { box-shadow: 0 0 0 2px var(--sign), var(--shadow); }
 .k-label { font-family: var(--f-sign); font-weight: 700; font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); }
 .art { font-weight: 600; }
 .art-der { color: var(--der); } .art-die { color: var(--die); } .art-das { color: var(--das); }
+.next-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.next-title { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.9rem; line-height: 1; text-transform: uppercase; letter-spacing: .02em; }
+.next-de { margin: 3px 0 0; color: var(--ink-2); font-size: 1.05rem; font-style: italic; }
+.next-meta { margin: 0; color: var(--ink-2); }
+.next-meta b { color: var(--ink); }
+.boss-mini {
+  flex: none; width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font-size: 1.9rem;
+  background: radial-gradient(circle at 50% 35%, hsl(var(--h) 75% 62% / .5), hsl(var(--h) 60% 35% / .2) 72%);
+  box-shadow: inset 0 0 0 2px var(--sign);
+}
 
 .flip { display: grid; perspective: 1400px; padding-top: 22px; cursor: pointer; border-radius: 8px; outline-offset: 4px; -webkit-tap-highlight-color: transparent; }
 .flip-inner { display: grid; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.3, .7, .2, 1); }
 .flip.is-flipped .flip-inner { transform: rotateY(180deg); }
 .face { grid-area: 1 / 1; backface-visibility: hidden; -webkit-backface-visibility: hidden; min-height: 330px; }
-.back { transform: rotateY(180deg); }
+.flip .back { transform: rotateY(180deg); }
 .k-body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 4px; padding-block: 6px; }
 .k-word { font-weight: 700; font-size: clamp(1.8rem, 7.5vw, 2.9rem); line-height: 1.08; letter-spacing: -.01em; overflow-wrap: break-word; }
 .k-pos { color: var(--ink-2); font-size: .95rem; padding-bottom: 14px; }
@@ -171,6 +250,178 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .speak { display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--surface); color: var(--accent); cursor: pointer; flex: none; vertical-align: middle; }
 .speak svg { width: 18px; height: 18px; }
 .speak:hover { border-color: var(--accent); }
+.speak.sm { width: 32px; height: 32px; }
+.speak.sm svg { width: 15px; height: 15px; }
+
+/* ---------- premium banner ---------- */
+.pro-banner {
+  width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 0; border-radius: 14px; text-align: left; cursor: pointer;
+  background: var(--boss-bg); color: var(--boss-ink); box-shadow: var(--shadow); position: relative; overflow: hidden;
+}
+.pro-banner::after { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 0% 50%, rgba(245, 184, 0, .22), transparent 55%); pointer-events: none; }
+.pro-banner .medal { flex: none; width: 48px; height: 48px; border-radius: 12px; display: grid; place-items: center; background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 4px var(--sign-ink); }
+.pro-banner .medal svg { width: 26px; height: 26px; }
+.pb-text { min-width: 0; display: flex; flex-direction: column; }
+.pb-text b { font-family: var(--f-sign); font-weight: 800; font-size: 1.2rem; letter-spacing: .04em; text-transform: uppercase; }
+.pb-text span { color: var(--boss-ink-2); font-size: .92rem; }
+.pro-banner .go { margin-left: auto; flex: none; font-family: var(--f-sign); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--sign); }
+@media (max-width: 420px) { .pro-banner .go { display: none; } }
+
+/* ---------- panels ---------- */
+.panel { background: var(--card); border-radius: 14px; padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.panel-head h3 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; text-transform: uppercase; letter-spacing: .06em; }
+.panel p { margin: 0; }
+.panel > .btn { align-self: flex-start; }
+.empty { color: var(--ink-2); padding: 8px 0; }
+.boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.bx { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
+.bx-n { font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
+.bx-bar { width: 100%; height: 64px; border-radius: 6px; background: var(--surface); border: 1.5px solid var(--line); display: flex; align-items: flex-end; overflow: hidden; }
+.bx-bar i { display: block; width: 100%; background: var(--accent); transition: height .5s ease; }
+.bx:first-child .bx-bar i { background: var(--bad); }
+.bx:last-child .bx-bar i { background: var(--good); }
+.bx-l { font-family: var(--f-sign); font-weight: 600; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+
+.vocab { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.vocab li { display: grid; grid-template-columns: 1fr auto auto; gap: 0 12px; align-items: center; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.vocab li:last-child { border-bottom: 0; }
+.v-de { font-weight: 700; grid-column: 1; min-width: 0; overflow-wrap: break-word; }
+.v-en { grid-column: 1; color: var(--ink-2); font-size: .9rem; }
+.boxdots { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 3px; }
+.boxdots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.boxdots i.on { background: var(--accent); }
+.vocab .speak { grid-column: 3; grid-row: 1 / span 2; }
+
+/* route */
+.route { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.stn, .route-div { position: relative; }
+.stn::before, .route-div::before { content: ""; position: absolute; left: 11px; top: 50%; height: 100%; width: 4px; background: var(--line); }
+.route-div::before { top: 0; }
+.is-pro::before { background: repeating-linear-gradient(to bottom, var(--sign) 0 7px, transparent 7px 12px); }
+.stn.done::before { background: var(--accent); }
+.stn:last-child::before { display: none; }
+.route-div { padding: 8px 0 8px 40px; }
+.route-div span { display: inline-flex; align-items: center; gap: 6px; font-family: var(--f-sign); font-weight: 800; font-size: .8rem; letter-spacing: .12em; text-transform: uppercase; color: var(--sign-ink); background: var(--sign); padding: 4px 9px; border-radius: 6px; }
+.route-div svg { width: 14px; height: 14px; }
+.stn-btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 9px 4px 9px 0; background: none; border: 0; text-align: left; cursor: pointer; border-radius: 8px; }
+.stn-btn:disabled { cursor: default; }
+.dot { position: relative; z-index: 1; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--card); border: 4px solid var(--line); display: grid; place-items: center; }
+.stn.done .dot { background: var(--accent); border-color: var(--accent); }
+.stn.done .dot::after { content: ""; width: 8px; height: 5px; border-left: 2.5px solid var(--accent-ink); border-bottom: 2.5px solid var(--accent-ink); transform: translateY(-1px) rotate(-45deg); }
+.stn.open .dot { background: var(--sign); border-color: var(--sign-ink); box-shadow: 0 0 0 4px var(--mark); }
+.stn.pro .dot { border-color: var(--sign); }
+.stn.locked .stn-main, .stn.future .stn-main { opacity: .55; }
+.stn-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.stn-t { font-weight: 600; }
+.stn-de { font-size: .85rem; color: var(--ink-2); }
+.stn-end { flex: none; font-family: var(--f-sign); font-weight: 700; font-size: .92rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+.stn.open .stn-end { color: var(--accent); }
+.stn.done .stn-end { color: var(--sign); letter-spacing: .12em; }
+.stn.done .stn-end .off { color: var(--line); }
+.stn-btn:hover:not(:disabled) .stn-t { text-decoration: underline; text-underline-offset: 3px; }
+.future-row { display: flex; align-items: center; gap: 14px; padding: 9px 0; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); font-family: var(--f-sign); font-weight: 700; font-size: .76rem; letter-spacing: .08em; text-transform: uppercase; }
+.badge svg { width: 12px; height: 12px; }
+.badge-pro { background: var(--sign); color: var(--sign-ink); border-color: transparent; }
+
+/* ---------- forms ---------- */
+.form { display: flex; flex-direction: column; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-family: var(--f-sign); font-weight: 700; font-size: .8rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.field input, .name-form input {
+  font: inherit; font-size: 1.05rem; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--line);
+  background: var(--surface); color: var(--ink); width: 100%; min-width: 0;
+}
+.field input:focus, .name-form input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--mark); }
+.form-error { margin: 0; padding: 10px 12px; border-radius: 10px; background: var(--bad-bg); border-left: 4px solid var(--bad); }
+.demo-note { padding: 10px 12px; border-radius: 10px; background: var(--warn-bg); border: 1.5px dashed var(--sign-deep); font-size: .9rem; }
+.demo-note b { font-family: var(--f-sign); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; margin-right: 8px; }
+.or { display: flex; align-items: center; gap: 10px; color: var(--ink-2); font-size: .85rem; }
+.or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 12px; background: var(--surface); border: 1.5px solid var(--line); }
+.seg button {
+  border: 0; background: none; padding: 9px 4px; border-radius: 9px; cursor: pointer; min-width: 0;
+  font-family: var(--f-sign); font-weight: 700; font-size: .95rem; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-2);
+}
+.seg button small { display: block; font-family: var(--f-body); font-weight: 500; font-size: .74rem; text-transform: none; letter-spacing: 0; }
+.seg button[aria-pressed="true"], .seg button[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 0 var(--line), 0 3px 8px -3px rgba(0, 0, 0, .25); }
+.opts-panel { gap: 14px; }
+.opt-block { display: flex; flex-direction: column; gap: 8px; }
+.opt-label { font-weight: 600; }
+.divider { height: 1px; background: var(--line); }
+.row-opt { display: flex; align-items: center; justify-content: space-between; gap: 14px; cursor: pointer; }
+.row-opt b { display: block; font-weight: 600; }
+.row-opt small { display: block; color: var(--ink-2); font-size: .85rem; }
+.switch { appearance: none; -webkit-appearance: none; flex: none; width: 50px; height: 30px; margin: 0; border-radius: 999px; background: var(--line); position: relative; cursor: pointer; transition: background-color .2s ease; }
+.switch::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: var(--card); box-shadow: 0 1px 3px rgba(0, 0, 0, .35); transition: transform .2s ease; }
+.switch:checked { background: var(--accent); }
+.switch:checked::after { transform: translateX(20px); }
+.switch:disabled { opacity: .5; cursor: not-allowed; }
+.confirm { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bad-bg); }
+
+/* ---------- profile ---------- */
+.profile-card { display: flex; align-items: center; gap: 16px; background: var(--card); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+.pc-main { min-width: 0; flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.pc-main h2 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.8rem; line-height: 1.05; text-transform: uppercase; overflow-wrap: anywhere; }
+.pc-main > p { margin: 0; color: var(--ink-2); overflow-wrap: anywhere; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.name-form { display: flex; gap: 8px; flex-wrap: wrap; }
+.name-form input { flex: 1 1 160px; }
+.name-form .btn { min-height: 44px; padding-block: 8px; }
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
+.stat-grid div { background: var(--card); border-radius: 12px; padding: 12px 12px 10px; box-shadow: var(--shadow); min-width: 0; }
+.stat-grid dd { margin: 2px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.5rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* ---------- premium ---------- */
+.back-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 4px; border: 0; background: none; padding: 4px 0; cursor: pointer; color: var(--ink-2); font-family: var(--f-sign); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.back-btn svg { width: 20px; height: 20px; }
+.pro-hero { position: relative; overflow: hidden; background: var(--boss-bg); color: var(--boss-ink); border-radius: 18px; padding: 28px 20px 24px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; box-shadow: var(--shadow); }
+.pro-hero::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 50% 0%, rgba(245, 184, 0, .3), transparent 62%); pointer-events: none; }
+.crown { position: relative; width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center; background: var(--sign); color: var(--sign-ink); box-shadow: inset 0 0 0 3px var(--sign), inset 0 0 0 5px var(--sign-ink), 0 10px 30px -8px rgba(245, 184, 0, .6); animation: bob 3s ease-in-out infinite; }
+.crown svg { width: 42px; height: 42px; }
+.pro-hero h1 { position: relative; margin: 4px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 2.3rem; line-height: 1; text-transform: uppercase; }
+.pro-hero p { position: relative; margin: 0; color: var(--boss-ink-2); max-width: 32ch; }
+.plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding-top: 8px; }
+@media (max-width: 400px) { .plans { grid-template-columns: 1fr; } }
+.plan {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left;
+  padding: 16px; border-radius: 14px; border: 2px solid var(--line); background: var(--card); cursor: pointer; box-shadow: var(--shadow);
+  transition: border-color .15s ease, box-shadow .15s ease, transform .1s ease;
+}
+.plan:hover { border-color: var(--accent); }
+.plan[aria-checked="true"] { border-color: var(--accent); box-shadow: 0 0 0 3px var(--mark), var(--shadow); }
+.plan .radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--line); margin-bottom: 6px; }
+.plan[aria-checked="true"] .radio { border-color: var(--accent); background: var(--accent); box-shadow: inset 0 0 0 4px var(--card); }
+.p-name { font-family: var(--f-sign); font-weight: 800; font-size: 1.1rem; letter-spacing: .06em; text-transform: uppercase; }
+.p-price { font-family: var(--f-sign); font-weight: 800; font-size: 2.1rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.p-price small { font-size: .95rem; font-weight: 600; color: var(--ink-2); }
+.p-note { color: var(--ink-2); font-size: .88rem; }
+.p-badge { position: absolute; top: -11px; right: 12px; padding: 3px 9px; border-radius: 6px; background: var(--sign); color: var(--sign-ink); font-family: var(--f-sign); font-weight: 800; font-size: .74rem; letter-spacing: .1em; text-transform: uppercase; }
+.table-wrap { overflow-x: auto; }
+.compare { width: 100%; border-collapse: collapse; font-size: .95rem; }
+.compare th, .compare td { padding: 10px 8px; border-bottom: 1px solid var(--line); text-align: center; }
+.compare tr:last-child th, .compare tr:last-child td { border-bottom: 0; }
+.compare th[scope="row"] { text-align: left; font-weight: 500; }
+.compare thead th { font-family: var(--f-sign); font-weight: 800; font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.compare td { font-family: var(--f-sign); font-weight: 700; white-space: nowrap; }
+.yes, .no { display: inline-grid; place-items: center; }
+.yes svg, .no svg { width: 20px; height: 20px; }
+.yes { color: var(--good); } .no { color: var(--ink-2); }
+
+/* ---------- modal ---------- */
+.modal-back {
+  position: fixed; inset: 0; z-index: 30; display: grid; place-items: center; background: var(--overlay); animation: fadeIn .2s ease-out;
+  padding-block: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.modal { width: 100%; max-width: 26rem; background: var(--card); border-radius: 18px; padding: 22px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 24px 60px -20px rgba(0, 0, 0, .6); animation: rise .25s ease-out; }
+.modal h2 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.7rem; text-transform: uppercase; }
+.modal p { margin: 0; }
+.sum { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1.5px solid var(--line); }
+.sum > span { display: flex; flex-direction: column; }
+.sum-price { font-family: var(--f-sign); font-weight: 800; font-size: 1.3rem; white-space: nowrap; }
+.spinner { width: 42px; height: 42px; margin: 10px auto; border-radius: 50%; border: 4px solid var(--line); border-top-color: var(--accent); animation: spin .8s linear infinite; }
 
 /* ---------- session ---------- */
 .sbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; align-items: center; gap: 10px; padding-block: 10px; margin-top: -10px; background: var(--bg); }
@@ -187,11 +438,11 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .deal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .deal-actions .btn { flex: 1 1 150px; }
 .pips { display: flex; justify-content: center; gap: 6px; }
-.pips span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+.pips span { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background-color .2s ease; }
 .pips span.on { background: var(--accent); }
 
-/* ---------- quiz ---------- */
-.qcard { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+/* quiz */
+.qcard { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 18px; display: flex; flex-direction: column; gap: 14px; }
 .qtype { font-family: var(--f-sign); font-weight: 800; font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
 .qprompt { margin: 0; font-size: 1.35rem; font-weight: 600; line-height: 1.35; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
 .qprompt-de { font-size: 1.5rem; display: block; }
@@ -202,15 +453,20 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .opts-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 440px) { .opts:not(.opts-3) { grid-template-columns: 1fr; } }
-.opt { display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 14px; min-height: 56px; min-width: 0; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); cursor: pointer; font-size: 1.06rem; font-weight: 500; }
+.opt {
+  display: flex; align-items: center; gap: 12px; text-align: left; padding: 13px 14px; min-height: 56px; min-width: 0;
+  border-radius: 12px; border: 2px solid var(--line); background: var(--surface); cursor: pointer; font-size: 1.06rem; font-weight: 500;
+  box-shadow: 0 3px 0 var(--line); transition: transform .08s ease, box-shadow .08s ease, border-color .15s ease;
+}
 .opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
 .opt:disabled { cursor: default; }
 .opt .key { flex: none; width: 24px; height: 24px; border-radius: 6px; display: grid; place-items: center; font-family: var(--f-sign); font-weight: 700; font-size: .85rem; background: var(--bg); color: var(--ink-2); }
 .opt-t { min-width: 0; overflow-wrap: break-word; }
 .opts-3 .opt { justify-content: center; font-size: 1.35rem; font-weight: 700; }
-.opt.is-wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--ink-2); }
+.opt.is-wrong { border-color: var(--bad); background: var(--bad-bg); color: var(--ink-2); box-shadow: none; animation: nudge .35s ease; }
 .opt.is-wrong .opt-t { text-decoration: line-through; }
-.opt.is-right { border-color: var(--good); background: var(--good-bg); }
+.opt.is-right { border-color: var(--good); background: var(--good-bg); box-shadow: 0 3px 0 var(--good); animation: pop .3s ease; }
 .listen-btn { align-self: flex-start; }
 .typeform { display: flex; flex-direction: column; gap: 10px; }
 #ans { font: inherit; font-size: 1.3rem; padding: 12px 14px; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
@@ -220,22 +476,29 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .uml { width: 44px; height: 44px; border-radius: 8px; border: 1.5px solid var(--line); background: var(--card); font-size: 1.15rem; font-weight: 600; cursor: pointer; }
 .uml:hover { border-color: var(--accent); }
 
-.fb { border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border: 2px solid; animation: rise .25s ease-out; }
+.fb { border-radius: 14px; padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border: 2px solid; animation: rise .25s ease-out; }
 .fb p { margin: 0; }
 .fb-good { background: var(--good-bg); border-color: var(--good); }
 .fb-hint { background: var(--warn-bg); border-color: var(--sign); }
 .fb-bad { background: var(--bad-bg); border-color: var(--bad); }
 .fb-title { font-family: var(--f-sign); font-weight: 800; font-size: 1.55rem; line-height: 1.1; text-transform: uppercase; letter-spacing: .03em; display: flex; align-items: baseline; gap: 4px 10px; flex-wrap: wrap; }
 .fb-sub { font-family: var(--f-body); font-weight: 500; font-size: .95rem; text-transform: none; letter-spacing: 0; color: var(--ink-2); }
-.gain { margin-left: auto; background: var(--sign); color: var(--sign-ink); padding: 3px 10px; border-radius: 999px; font-size: 1rem; letter-spacing: .04em; }
+.gain { margin-left: auto; background: var(--sign); color: var(--sign-ink); padding: 3px 10px; border-radius: 999px; font-size: 1rem; letter-spacing: .04em; animation: pop .35s ease; }
 .fb-answer { font-size: 1.25rem; font-weight: 700; }
 .fb-card { color: var(--ink-2); }
 .fb .btn { align-self: stretch; }
 
-/* ---------- boss ---------- */
-.arena { background: var(--boss-bg); color: var(--boss-ink); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); }
+/* boss */
+.arena { background: var(--boss-bg); color: var(--boss-ink); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.arena::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle at 15% 0%, rgba(255, 92, 106, .16), transparent 50%); pointer-events: none; }
+.arena > * { position: relative; }
 .boss-top { display: flex; align-items: center; gap: 14px; }
-.boss-face { flex: none; width: 76px; height: 76px; display: grid; place-items: center; font-size: 3.2rem; line-height: 1; background: var(--boss-tint); border-radius: 18px; }
+.boss-face {
+  flex: none; width: 84px; height: 84px; display: grid; place-items: center; font-size: 3.3rem; line-height: 1; border-radius: 50%;
+  background: radial-gradient(circle at 50% 35%, hsl(var(--h) 75% 62% / .6), hsl(var(--h) 60% 30% / .25) 72%);
+  box-shadow: inset 0 0 0 3px var(--sign), 0 0 28px hsl(var(--h) 80% 55% / .35);
+  animation: bob 2.6s ease-in-out infinite;
+}
 .boss-face.hit { animation: shake .5s ease; }
 .boss-id { min-width: 0; }
 .boss-eyebrow { font-family: var(--f-sign); font-weight: 700; font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: var(--sign); }
@@ -251,11 +514,11 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .rules { margin: 0; padding-left: 1.2em; color: var(--boss-ink-2); display: flex; flex-direction: column; gap: 4px; }
 .round { display: flex; flex-direction: column; gap: 4px; }
 .build-prompt { margin: 0; font-size: 1.15rem; }
-.build-prompt b { color: var(--boss-ink); }
 .slots { min-height: 66px; border: 2px dashed var(--boss-line); border-radius: 12px; padding: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .slot-ph { color: var(--boss-ink-2); font-size: .95rem; padding-left: 4px; }
 .pool { display: flex; flex-wrap: wrap; gap: 8px; }
-.tile { padding: 10px 14px; border-radius: 8px; border: 0; background: var(--card); color: var(--ink); font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 3px 0 var(--line); }
+.tile { padding: 10px 14px; border-radius: 9px; border: 0; background: var(--card); color: var(--ink); font-size: 1.1rem; font-weight: 600; cursor: pointer; box-shadow: 0 3px 0 var(--line); transition: transform .08s ease; }
+.tile:active:not(:disabled) { transform: translateY(2px); }
 .tile:disabled { cursor: default; }
 .tile.used { opacity: .18; box-shadow: none; }
 .bmsg { border-radius: 10px; padding: 12px 14px; background: var(--boss-tint); border-left: 4px solid var(--sign); }
@@ -263,7 +526,7 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .bmsg-miss { border-left-color: var(--heart); }
 .de-line { display: block; margin-top: 4px; font-size: 1.1rem; font-weight: 600; }
 
-/* ---------- results ---------- */
+/* results */
 .results { display: flex; flex-direction: column; gap: 16px; text-align: center; }
 .stamp-wrap { display: grid; place-items: center; padding-block: 22px 6px; }
 .stamp {
@@ -272,87 +535,81 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
   box-shadow: inset 0 0 0 3px var(--bg), inset 0 0 0 5px currentColor;
   transform: rotate(-7deg); opacity: .92; animation: stamp .5s cubic-bezier(.2, 1.3, .4, 1) both;
 }
+.modal .stamp { box-shadow: inset 0 0 0 3px var(--card), inset 0 0 0 5px currentColor; }
+.stamp-pro { color: var(--accent); }
 .results h2 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 2rem; text-transform: uppercase; letter-spacing: .03em; }
 .lede { margin: 0; color: var(--ink-2); font-size: 1.05rem; }
 .stars { font-size: 2.4rem; letter-spacing: .18em; color: var(--sign); line-height: 1; }
 .stars .off { color: var(--line); }
 .rstats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 0; }
-.rstats div { background: var(--card); border-radius: 10px; padding: 12px 8px; box-shadow: var(--shadow); }
-.rstats dt { font-family: var(--f-sign); font-weight: 700; font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+.rstats div { background: var(--card); border-radius: 12px; padding: 12px 8px; box-shadow: var(--shadow); }
 .rstats dd { margin: 2px 0 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.7rem; font-variant-numeric: tabular-nums; }
-.wlist { list-style: none; margin: 0; padding: 4px 16px; background: var(--card); border-radius: 12px; box-shadow: var(--shadow); text-align: left; }
+.wlist { list-style: none; margin: 0; padding: 4px 16px; background: var(--card); border-radius: 14px; box-shadow: var(--shadow); text-align: left; }
 .wlist li { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
 .wlist li:last-child { border-bottom: 0; }
 .wlist li span:first-child { font-weight: 700; }
 .wlist li span:last-child { color: var(--ink-2); text-align: right; }
 
-/* ---------- home panels ---------- */
-.next-title { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.9rem; line-height: 1; text-transform: uppercase; letter-spacing: .02em; }
-.next-de { margin: 2px 0 0; color: var(--ink-2); font-size: 1.05rem; font-style: italic; }
-.next-meta { margin: 0; color: var(--ink-2); }
-.next-meta b { color: var(--ink); }
-.panel { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
-.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
-.panel-head h3 { margin: 0; font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; text-transform: uppercase; letter-spacing: .06em; }
-.panel p { margin: 0; }
-.boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.bx { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0; }
-.bx-n { font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; font-variant-numeric: tabular-nums; }
-.bx-bar { width: 100%; height: 58px; border-radius: 6px; background: var(--surface); border: 1.5px solid var(--line); display: flex; align-items: flex-end; overflow: hidden; }
-.bx-bar i { display: block; width: 100%; background: var(--accent); }
-.bx:first-child .bx-bar i { background: var(--bad); }
-.bx:last-child .bx-bar i { background: var(--good); }
-.bx-l { font-family: var(--f-sign); font-weight: 600; font-size: .74rem; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
-
-.route { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
-.stn { position: relative; }
-.stn::before { content: ""; position: absolute; left: 11px; top: 50%; height: 100%; width: 4px; background: var(--line); }
-.stn.done::before { background: var(--accent); }
-.stn:last-child::before { display: none; }
-.stn-btn { display: flex; align-items: center; gap: 14px; width: 100%; padding: 9px 4px 9px 0; background: none; border: 0; text-align: left; cursor: pointer; border-radius: 8px; }
-.stn-btn:disabled { cursor: default; }
-.dot { position: relative; z-index: 1; flex: none; width: 26px; height: 26px; border-radius: 50%; background: var(--card); border: 4px solid var(--line); display: grid; place-items: center; }
-.stn.done .dot { background: var(--accent); border-color: var(--accent); }
-.stn.done .dot::after { content: ""; width: 8px; height: 5px; border-left: 2.5px solid var(--accent-ink); border-bottom: 2.5px solid var(--accent-ink); transform: translateY(-1px) rotate(-45deg); }
-.stn.open .dot { background: var(--sign); border-color: var(--sign-ink); }
-.stn.locked .stn-main, .stn.future .stn-main { opacity: .55; }
-.stn-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.stn-t { font-weight: 600; }
-.stn-de { font-size: .85rem; color: var(--ink-2); }
-.stn-end { flex: none; font-family: var(--f-sign); font-weight: 700; font-size: .92rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
-.stn.open .stn-end { color: var(--accent); }
-.stn.done .stn-end { color: var(--sign); letter-spacing: .12em; }
-.stn.done .stn-end .off { color: var(--line); }
-.stn-btn:hover:not(:disabled) .stn-t { text-decoration: underline; text-underline-offset: 3px; }
-.future-row { display: flex; align-items: center; gap: 14px; padding: 9px 0; }
-
-.settings label { display: flex; align-items: center; gap: 10px; font-weight: 500; cursor: pointer; }
-.settings input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
-.confirm { display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 10px; background: var(--bad-bg); }
-.foot { display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); font-size: .85rem; text-align: center; padding-top: 4px; }
+.foot { display: flex; flex-direction: column; gap: 4px; color: var(--ink-2); font-size: .85rem; text-align: center; }
 .foot p { margin: 0; }
 
-.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 20; max-width: calc(100% - 32px); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-weight: 600; text-align: center; box-shadow: var(--shadow); }
-.toast.show { animation: rise .3s ease-out; }
+.toast {
+  position: fixed; left: 50%; bottom: calc(86px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40;
+  max-width: calc(100% - 32px); background: var(--ink); color: var(--bg); padding: 10px 18px; border-radius: 999px;
+  font-weight: 600; text-align: center; box-shadow: var(--shadow);
+}
+.toast.show { animation: toastIn .3s ease-out; }
 
+@keyframes viewIn { from { transform: translateY(8px); } to { transform: none; } }
 @keyframes rise { from { transform: translateY(8px); } to { transform: none; } }
-.toast.show { animation-name: toastIn; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes toastIn { from { transform: translate(-50%, 10px); } to { transform: translate(-50%, 0); } }
+@keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.05); } 100% { transform: scale(1); } }
+@keyframes nudge { 0%, 100% { transform: none; } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes shake { 0%, 100% { transform: none; } 20% { transform: translateX(-8px) rotate(-6deg); } 40% { transform: translateX(7px) rotate(5deg); } 60% { transform: translateX(-5px) rotate(-3deg); } 80% { transform: translateX(3px); } }
 @keyframes stamp { from { transform: rotate(-7deg) scale(1.9); opacity: 0; } to { transform: rotate(-7deg) scale(1); opacity: .92; } }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
 @media (max-width: 400px) {
-  .stat b { font-size: 1.8rem; }
-  .stats { gap: 8px; }
-  .stat { padding-inline: 10px; }
+  .today { grid-template-columns: 1fr; justify-items: center; }
+  .minis { width: 100%; }
+  .stat-grid { gap: 8px; }
+  .stat-grid div { padding-inline: 10px; }
+  .stat-grid dd { font-size: 1.25rem; }
   .chip { padding-inline: 8px; }
+  .profile-card { flex-direction: column; text-align: center; }
+  .profile-card .chips { justify-content: center; }
 }
 </style>
 <div id="app"></div>
 <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
 
+<script>
+/* LingoCards settings. Edit prices, the free tier and links here. */
+window.LINGO_CONFIG = {
+  version: "2.0.0",
+
+  // Accounts and payments run in DEMO mode: accounts live only in the browser,
+  // passwords are not checked or stored, and checkout never charges anything.
+  // To go live, replace the demo code in js/services.js with Supabase (accounts)
+  // and Stripe (payments). See README.md.
+  mode: "demo",
+
+  // How many batches are free. Everything after this needs Premium.
+  freeBatches: 3,
+
+  currency: "USD",
+  plans: [
+    { id: "monthly", name: "Monthly", price: 4.99, period: "month", note: "Cancel anytime" },
+    { id: "lifetime", name: "Lifetime", price: 19.99, period: null, note: "Pay once, keep it forever", badge: "Best value" }
+  ],
+
+  repoUrl: "https://github.com/Xullko/lingo-app"
+};
+</script>
 <script>
 /* LingoCards word list. Edit, add or remove words here.
    Each batch = 10 words + a boss. Row format is described just below. */
@@ -501,13 +758,270 @@ window.LINGO_DATA = [
       ["", "teuer", "adj", "ˈtɔʏ̯ɐ", "TOY-er", "expensive", "Das Hotel ist zu teuer.", "The hotel is too expensive.", "teuer"],
       ["", "billig", "adj", "ˈbɪlɪç", "BILL-ish", "cheap", "Das Brot ist billig.", "The bread is cheap.", "billig"],
       ["", "schnell", "adj", "ʃnɛl", "shnell", "fast / quick", "Der Zug fährt schnell.", "The train goes fast.", "schnell"]
+    ] },
+  { t: "Shopping & Money", de: "Einkaufen",
+    boss: { n: "Die Kassiererin", g: "the cashier", e: "🧾", s: "Saturday rush at the supermarket. The cashier scans faster than you can think. Keep up with her." },
+    w: [
+      ["das", "Geld", "noun", "ɡɛlt", "gelt", "money", "Ich habe kein Geld.", "I have no money.", "Geld"],
+      ["", "bezahlen", "verb", "bəˈtsaːlən", "beh-TSAH-len", "to pay", "Kann ich mit Karte bezahlen?", "Can I pay by card?", "bezahlen"],
+      ["der", "Preis", "noun", "pʁaɪ̯s", "price (rhymes with rice)", "price", "Der Preis ist gut.", "The price is good.", "Preis"],
+      ["das", "Geschäft", "noun", "ɡəˈʃɛft", "geh-SHEFT", "shop / store", "Das Geschäft ist heute geschlossen.", "The shop is closed today.", "Geschäft"],
+      ["die", "Kasse", "noun", "ˈkasə", "KAH-seh", "checkout / cash register", "Bitte zahlen Sie an der Kasse.", "Please pay at the checkout.", "Kasse"],
+      ["die", "Tasche", "noun", "ˈtaʃə", "TAH-sheh", "bag", "Meine Tasche ist schwer.", "My bag is heavy.", "Tasche"],
+      ["der", "Markt", "noun", "maʁkt", "markt", "market", "Der Markt ist am Samstag.", "The market is on Saturday.", "Markt"],
+      ["", "viel", "adv", "fiːl", "feel", "a lot / much", "Das kostet viel Geld.", "That costs a lot of money.", "viel"],
+      ["", "wenig", "adv", "ˈveːnɪç", "VAY-nish", "little / not much", "Ich habe wenig Zeit.", "I have little time.", "wenig"],
+      ["", "geben", "verb", "ˈɡeːbn̩", "GAY-ben", "to give", "Gib mir bitte die Tasche.", "Please give me the bag.", "Gib"]
+    ] },
+  { t: "Body & Health", de: "Körper und Gesundheit",
+    boss: { n: "Das Grippevirus", g: "the flu virus", e: "🦠", s: "A flu virus has moved in for the week. Describe how you feel to chase it back out." },
+    w: [
+      ["der", "Kopf", "noun", "kɔpf", "kopf", "head", "Mein Kopf tut weh.", "My head hurts.", "Kopf"],
+      ["die", "Hand", "noun", "hant", "hahnt", "hand", "Gib mir deine Hand.", "Give me your hand.", "Hand"],
+      ["das", "Auge", "noun", "ˈaʊ̯ɡə", "OW-geh", "eye", "Das Auge ist rot.", "The eye is red.", "Auge"],
+      ["der", "Bauch", "noun", "baʊ̯x", "bowkh", "belly / stomach", "Ich habe einen vollen Bauch.", "I have a full stomach.", "Bauch"],
+      ["der", "Arzt", "noun", "aːɐ̯tst", "artst", "doctor", "Ich muss zum Arzt.", "I have to go to the doctor.", "Arzt"],
+      ["", "krank", "adj", "kʁaŋk", "krahnk", "sick / ill", "Heute bin ich krank.", "Today I am sick.", "krank"],
+      ["", "gesund", "adj", "ɡəˈzʊnt", "geh-ZOONT", "healthy", "Obst ist gesund.", "Fruit is healthy.", "gesund"],
+      ["die", "Apotheke", "noun", "apoˈteːkə", "ah-po-TAY-keh", "pharmacy", "Die Apotheke ist um die Ecke.", "The pharmacy is around the corner.", "Apotheke"],
+      ["", "wehtun", "verb", "ˈveːˌtuːn", "VAY-toon", "to hurt", "Tut das weh?", "Does that hurt?", "Tut"],
+      ["", "müde", "adj", "ˈmyːdə", "MÜ-deh (round your lips)", "tired", "Ich bin sehr müde.", "I am very tired.", "müde"]
+    ] },
+  { t: "Weather & Seasons", de: "Wetter und Jahreszeiten",
+    boss: { n: "Die Gewitterwolke", g: "the thundercloud", e: "⛈️", s: "A thundercloud has parked itself over your picnic. Talk about the weather to blow it away." },
+    w: [
+      ["das", "Wetter", "noun", "ˈvɛtɐ", "VET-er", "weather", "Wie ist das Wetter heute?", "What is the weather like today?", "Wetter"],
+      ["die", "Sonne", "noun", "ˈzɔnə", "ZON-neh", "sun", "Die Sonne ist heiß.", "The sun is hot.", "Sonne"],
+      ["der", "Regen", "noun", "ˈʁeːɡn̩", "RAY-gen", "rain", "Der Regen hört nicht auf.", "The rain won't stop.", "Regen"],
+      ["der", "Schnee", "noun", "ʃneː", "shnay", "snow", "Im Winter liegt viel Schnee.", "In winter there is a lot of snow.", "Schnee"],
+      ["der", "Wind", "noun", "vɪnt", "vint", "wind", "Der Wind ist sehr stark.", "The wind is very strong.", "Wind"],
+      ["der", "Sommer", "noun", "ˈzɔmɐ", "ZOM-er", "summer", "Der Sommer ist warm.", "Summer is warm.", "Sommer"],
+      ["der", "Winter", "noun", "ˈvɪntɐ", "VIN-ter", "winter", "Der Winter ist lang.", "Winter is long.", "Winter"],
+      ["", "warm", "adj", "vaʁm", "varm", "warm", "Heute ist es warm.", "It is warm today.", "warm"],
+      ["", "regnen", "verb", "ˈʁeːɡnən", "RAYG-nen", "to rain", "Es regnet schon wieder.", "It's raining again.", "regnet"],
+      ["", "scheinen", "verb", "ˈʃaɪ̯nən", "SHY-nen", "to shine", "Heute scheint die Sonne.", "The sun is shining today.", "scheint"]
+    ] },
+  { t: "Work & School", de: "Arbeit und Schule",
+    boss: { n: "Der Chef", g: "the boss (yes, really)", e: "💼", s: "First day at your new job in Frankfurt. Your boss calls you in to see if your German is ready for work." },
+    w: [
+      ["die", "Arbeit", "noun", "ˈaʁbaɪ̯t", "AR-bite", "work / job", "Die Arbeit beginnt um acht.", "Work starts at eight.", "Arbeit"],
+      ["die", "Schule", "noun", "ˈʃuːlə", "SHOO-leh", "school", "Die Kinder gehen in die Schule.", "The children go to school.", "Schule"],
+      ["der", "Lehrer", "noun", "ˈleːʁɐ", "LAY-rer", "teacher", "Der Lehrer ist sehr nett.", "The teacher is very nice.", "Lehrer"],
+      ["der", "Kollege", "noun", "kɔˈleːɡə", "ko-LAY-geh", "colleague", "Mein Kollege trinkt viel Kaffee.", "My colleague drinks a lot of coffee.", "Kollege"],
+      ["das", "Büro", "noun", "byˈʁoː", "bü-ROH", "office", "Das Büro ist im dritten Stock.", "The office is on the third floor.", "Büro"],
+      ["die", "Aufgabe", "noun", "ˈaʊ̯fˌɡaːbə", "OWF-gah-beh", "task / exercise", "Die Aufgabe ist schwer.", "The task is difficult.", "Aufgabe"],
+      ["", "schreiben", "verb", "ˈʃʁaɪ̯bn̩", "SHRY-ben", "to write", "Ich schreibe eine E-Mail.", "I am writing an email.", "schreibe"],
+      ["", "fragen", "verb", "ˈfʁaːɡn̩", "FRAH-gen", "to ask", "Darf ich etwas fragen?", "May I ask something?", "fragen"],
+      ["", "antworten", "verb", "ˈantvɔʁtn̩", "AHNT-vor-ten", "to answer", "Bitte antworten Sie schnell.", "Please answer quickly.", "antworten"],
+      ["", "verstehen", "verb", "fɛɐ̯ˈʃteːən", "fair-SHTAY-en", "to understand", "Ich verstehe das nicht.", "I don't understand that.", "verstehe"]
+    ] },
+  { t: "Clothes & Colors", de: "Kleidung und Farben",
+    boss: { n: "Der Modezar", g: "the fashion king", e: "🎩", s: "A Berlin fashion king is judging your outfit. Describe it perfectly or be sent home." },
+    w: [
+      ["das", "Hemd", "noun", "hɛmt", "hemt", "shirt", "Das Hemd ist neu.", "The shirt is new.", "Hemd"],
+      ["die", "Hose", "noun", "ˈhoːzə", "HOH-zeh", "pants / trousers", "Die Hose ist zu lang.", "The pants are too long.", "Hose"],
+      ["der", "Schuh", "noun", "ʃuː", "shoo", "shoe", "Der Schuh passt nicht.", "The shoe doesn't fit.", "Schuh"],
+      ["die", "Jacke", "noun", "ˈjakə", "YAH-keh", "jacket", "Nimm eine Jacke mit!", "Take a jacket with you!", "Jacke"],
+      ["", "tragen", "verb", "ˈtʁaːɡn̩", "TRAH-gen", "to wear / to carry", "Sie trägt ein rotes Kleid.", "She is wearing a red dress.", "trägt"],
+      ["", "rot", "adj", "ʁoːt", "roht", "red", "Die Tomate ist rot.", "The tomato is red.", "rot"],
+      ["", "blau", "adj", "blaʊ̯", "blow", "blue", "Der Himmel ist blau.", "The sky is blue.", "blau"],
+      ["", "grün", "adj", "ɡʁyːn", "grün (round your lips)", "green", "Das Gras ist grün.", "The grass is green.", "grün"],
+      ["", "schwarz", "adj", "ʃvaʁts", "shvarts", "black", "Mein Auto ist schwarz.", "My car is black.", "schwarz"],
+      ["", "weiß", "adj", "vaɪ̯s", "vice", "white", "Der Schnee ist weiß.", "The snow is white.", "weiß"]
+    ] },
+  { t: "Feelings", de: "Gefühle",
+    boss: { n: "Der Miesepeter", g: "the grouch", e: "😤", s: "A professional Miesepeter refuses to smile at anything. Talk about feelings until he cracks." },
+    w: [
+      ["", "glücklich", "adj", "ˈɡlʏklɪç", "GLÜK-lish", "happy", "Ich bin heute glücklich.", "I am happy today.", "glücklich"],
+      ["", "traurig", "adj", "ˈtʁaʊ̯ʁɪç", "TROW-rish", "sad", "Warum bist du traurig?", "Why are you sad?", "traurig"],
+      ["", "wütend", "adj", "ˈvyːtn̩t", "VÜ-tent", "angry", "Der Chef ist wütend.", "The boss is angry.", "wütend"],
+      ["die", "Angst", "noun", "aŋst", "ahngst", "fear", "Ich habe Angst vor Hunden.", "I am afraid of dogs.", "Angst"],
+      ["", "lieben", "verb", "ˈliːbn̩", "LEE-ben", "to love", "Ich liebe dich.", "I love you.", "liebe"],
+      ["", "mögen", "verb", "ˈmøːɡn̩", "MUR-gen (no r, round lips)", "to like", "Magst du Schokolade?", "Do you like chocolate?", "Magst"],
+      ["", "hoffen", "verb", "ˈhɔfn̩", "HOF-fen", "to hope", "Ich hoffe, es geht dir gut.", "I hope you are well.", "hoffe"],
+      ["die", "Liebe", "noun", "ˈliːbə", "LEE-beh", "love", "Die Liebe ist stark.", "Love is strong.", "Liebe"],
+      ["", "fühlen", "verb", "ˈfyːlən", "FÜ-len", "to feel", "Wie fühlst du dich?", "How do you feel?", "fühlst"],
+      ["", "gern", "adv", "ɡɛʁn", "gairn", "gladly / like doing", "Ich tanze gern.", "I like to dance.", "gern"]
+    ] },
+  { t: "Questions & Linkers", de: "Fragen und Verbindungen",
+    boss: { n: "Die Rätsel-Sphinx", g: "the riddle sphinx", e: "🦁", s: "A sphinx guards the city gate and speaks only in questions. Ask and answer in German to pass." },
+    w: [
+      ["", "was", "pron", "vas", "vahs", "what", "Was ist das?", "What is that?", "Was"],
+      ["", "wer", "pron", "veːɐ̯", "vair", "who", "Wer ist das?", "Who is that?", "Wer"],
+      ["", "wann", "adv", "van", "vahn", "when", "Wann kommt der Zug?", "When does the train come?", "Wann"],
+      ["", "warum", "adv", "vaˈʁʊm", "vah-ROOM", "why", "Warum lernst du Deutsch?", "Why are you learning German?", "Warum"],
+      ["", "wie", "adv", "viː", "vee", "how", "Wie heißt du?", "What's your name? (How are you called?)", "Wie"],
+      ["", "und", "conj", "ʊnt", "oont", "and", "Ich trinke Kaffee und Tee.", "I drink coffee and tea.", "und"],
+      ["", "aber", "conj", "ˈaːbɐ", "AH-ber", "but", "Das ist schön, aber teuer.", "That is nice, but expensive.", "aber"],
+      ["", "oder", "conj", "ˈoːdɐ", "OH-der", "or", "Kaffee oder Tee?", "Coffee or tea?", "oder"],
+      ["", "weil", "conj", "vaɪ̯l", "vile", "because", "Ich bleibe zu Hause, weil ich krank bin.", "I'm staying home because I'm sick.", "weil"],
+      ["", "auch", "adv", "aʊ̯x", "owkh", "also / too", "Ich komme auch mit.", "I'm coming along too.", "auch"]
+    ] },
+  { t: "Places in Town", de: "In der Stadt",
+    boss: { n: "Der Taxifahrer", g: "the taxi driver", e: "🚕", s: "Your Berlin taxi driver only goes where you tell him, and only in German. Name your stops." },
+    w: [
+      ["die", "Bank", "noun", "baŋk", "bahnk", "bank / bench", "Die Bank ist neben der Post.", "The bank is next to the post office.", "Bank"],
+      ["die", "Post", "noun", "pɔst", "posst", "post office / mail", "Ich gehe zur Post.", "I'm going to the post office.", "Post"],
+      ["das", "Restaurant", "noun", "ʁɛstoˈʁɑ̃ː", "res-toh-RAHN", "restaurant", "Das Restaurant ist voll.", "The restaurant is full.", "Restaurant"],
+      ["der", "Supermarkt", "noun", "ˈzuːpɐˌmaʁkt", "ZOO-per-markt", "supermarket", "Der Supermarkt ist bis zehn offen.", "The supermarket is open until ten.", "Supermarkt"],
+      ["das", "Krankenhaus", "noun", "ˈkʁaŋkn̩ˌhaʊ̯s", "KRAHN-ken-house", "hospital", "Er liegt im Krankenhaus.", "He is in the hospital.", "Krankenhaus"],
+      ["die", "Kirche", "noun", "ˈkɪʁçə", "KEER-sheh", "church", "Die Kirche ist sehr alt.", "The church is very old.", "Kirche"],
+      ["der", "Park", "noun", "paʁk", "park", "park", "Wir gehen in den Park.", "We are going to the park.", "Park"],
+      ["die", "Bibliothek", "noun", "biblioˈteːk", "bib-lee-oh-TAYK", "library", "Die Bibliothek ist ruhig.", "The library is quiet.", "Bibliothek"],
+      ["das", "Kino", "noun", "ˈkiːno", "KEE-noh", "cinema / movie theater", "Gehen wir heute ins Kino?", "Shall we go to the movies today?", "Kino"],
+      ["die", "Polizei", "noun", "poliˈtsaɪ̯", "po-lee-TSY", "police", "Ruf die Polizei!", "Call the police!", "Polizei"]
+    ] },
+  { t: "Free Time", de: "Freizeit",
+    boss: { n: "Das Faultier", g: "the sloth", e: "🦥", s: "A giant sloth has taken over your weekend and your sofa. Plan something fun to get it moving." },
+    w: [
+      ["das", "Buch", "noun", "buːx", "bookh", "book", "Das Buch ist spannend.", "The book is exciting.", "Buch"],
+      ["der", "Film", "noun", "fɪlm", "film", "film / movie", "Der Film war super.", "The movie was great.", "Film"],
+      ["die", "Musik", "noun", "muˈziːk", "moo-ZEEK", "music", "Ich höre gern Musik.", "I like listening to music.", "Musik"],
+      ["der", "Sport", "noun", "ʃpɔʁt", "shport", "sports / exercise", "Sport macht Spaß.", "Sports are fun.", "Sport"],
+      ["", "schwimmen", "verb", "ˈʃvɪmən", "SHVIM-men", "to swim", "Im Sommer schwimmen wir im See.", "In summer we swim in the lake.", "schwimmen"],
+      ["", "tanzen", "verb", "ˈtantsn̩", "TAHN-tsen", "to dance", "Wir tanzen die ganze Nacht.", "We dance all night.", "tanzen"],
+      ["", "singen", "verb", "ˈzɪŋən", "ZING-en", "to sing", "Sie singt sehr schön.", "She sings very beautifully.", "singt"],
+      ["", "reisen", "verb", "ˈʁaɪ̯zn̩", "RY-zen", "to travel", "Ich reise gern nach Italien.", "I like traveling to Italy.", "reise"],
+      ["der", "Urlaub", "noun", "ˈuːɐ̯laʊ̯p", "OOR-lowp", "vacation / holiday", "Wir machen Urlaub am Meer.", "We're on vacation by the sea.", "Urlaub"],
+      ["das", "Spiel", "noun", "ʃpiːl", "shpeel", "game / match", "Wer gewinnt das Spiel?", "Who is winning the game?", "Spiel"]
+    ] },
+  { t: "Family", de: "Die Familie",
+    boss: { n: "Der Uropa", g: "great-grandpa", e: "👴", s: "Great-grandpa turns 100 today and wants to hear about everyone at the party. Introduce the whole family." },
+    w: [
+      ["die", "Mutter", "noun", "ˈmʊtɐ", "MOOT-er", "mother", "Meine Mutter kocht sehr gut.", "My mother cooks very well.", "Mutter"],
+      ["der", "Vater", "noun", "ˈfaːtɐ", "FAH-ter", "father", "Mein Vater arbeitet viel.", "My father works a lot.", "Vater"],
+      ["der", "Bruder", "noun", "ˈbʁuːdɐ", "BROO-der", "brother", "Mein Bruder ist älter als ich.", "My brother is older than me.", "Bruder"],
+      ["die", "Schwester", "noun", "ˈʃvɛstɐ", "SHVESS-ter", "sister", "Meine Schwester wohnt in Wien.", "My sister lives in Vienna.", "Schwester"],
+      ["der", "Sohn", "noun", "zoːn", "zohn", "son", "Ihr Sohn ist fünf Jahre alt.", "Her son is five years old.", "Sohn"],
+      ["die", "Tochter", "noun", "ˈtɔxtɐ", "TOKH-ter", "daughter", "Seine Tochter studiert in München.", "His daughter studies in Munich.", "Tochter"],
+      ["der", "Onkel", "noun", "ˈɔŋkl̩", "ONG-kel", "uncle", "Mein Onkel hat einen Hund.", "My uncle has a dog.", "Onkel"],
+      ["die", "Tante", "noun", "ˈtantə", "TAHN-teh", "aunt", "Die Tante kommt zu Besuch.", "The aunt is coming to visit.", "Tante"],
+      ["die", "Oma", "noun", "ˈoːma", "OH-mah", "grandma", "Die Oma backt einen Kuchen.", "Grandma is baking a cake.", "Oma"],
+      ["", "heiraten", "verb", "ˈhaɪ̯ʁaːtn̩", "HY-rah-ten", "to marry", "Wir heiraten im Mai.", "We are getting married in May.", "heiraten"]
     ] }
 ];
+</script>
+<script>
+/* LingoCards accounts and payments.
+   DEMO VERSION: everything is stored in this browser's localStorage.
+   - Passwords are NOT checked or saved. Never use this for real accounts.
+   - Checkout never charges anything.
+   To go live, keep the same function names and swap the insides:
+   auth.*    -> Supabase Auth (supabase.auth.signUp / signInWithPassword / signOut)
+   billing.* -> Stripe Checkout or Payment Links, with a server webhook that marks
+                the user as Premium in your database. */
+(function () {
+  "use strict";
+  const CFG = window.LINGO_CONFIG;
+  const ACCOUNTS = "lingocards:accounts:v1";
+  const CURRENT = "lingocards:current-user:v1";
+  const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  const read = k => { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } };
+  const write = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const fail = msg => { throw new Error(msg); };
+  const accounts = () => read(ACCOUNTS) || {};
+  const newId = () => "u_" + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+  function saveUser(u) { const a = accounts(); a[u.email] = u; write(ACCOUNTS, a); return u; }
+
+  const auth = {
+    mode: CFG.mode,
+
+    current() {
+      const id = read(CURRENT);
+      if (!id) return null;
+      return Object.values(accounts()).find(u => u.id === id) || null;
+    },
+
+    async signUp({ name, email, password }) {
+      await wait(400);
+      name = (name || "").trim();
+      email = (email || "").trim().toLowerCase();
+      if (!name) fail("Enter your name.");
+      if (!EMAIL.test(email)) fail("Enter a valid email address.");
+      if ((password || "").length < 8) fail("Use a password with at least 8 characters.");
+      if (accounts()[email]) fail("An account with this email already exists. Log in instead.");
+      const u = { id: newId(), name, email, createdAt: Date.now(), plan: null };
+      saveUser(u);
+      write(CURRENT, u.id);
+      return u;
+    },
+
+    async logIn({ email, password }) {
+      await wait(400);
+      email = (email || "").trim().toLowerCase();
+      if (!EMAIL.test(email)) fail("Enter a valid email address.");
+      if (!password) fail("Enter your password.");
+      const u = accounts()[email];
+      if (!u) fail("No account uses this email yet. Create one instead.");
+      write(CURRENT, u.id);
+      return u;
+    },
+
+    async logOut() {
+      try { localStorage.removeItem(CURRENT); } catch (e) {}
+    },
+
+    async updateName(name) {
+      name = (name || "").trim();
+      if (!name) fail("Enter your name.");
+      const u = auth.current();
+      if (!u) fail("Log in first.");
+      u.name = name;
+      return saveUser(u);
+    }
+  };
+
+  const billing = {
+    mode: CFG.mode,
+
+    isPremium(u) {
+      if (!u || !u.plan) return false;
+      return u.plan.id === "lifetime" || (u.plan.renewsAt || 0) > Date.now();
+    },
+
+    // Live version: return { redirect: "<Stripe checkout URL>" } and the app follows it.
+    async startCheckout(planId) {
+      if (!CFG.plans.some(p => p.id === planId)) fail("Pick a plan first.");
+      return { demo: true };
+    },
+
+    async completeDemoPurchase(planId) {
+      await wait(1300);
+      const u = auth.current();
+      if (!u) fail("Log in first.");
+      const now = Date.now();
+      u.plan = planId === "lifetime"
+        ? { id: "lifetime", since: now }
+        : { id: "monthly", since: now, renewsAt: now + 30 * 864e5, cancelled: false };
+      return saveUser(u);
+    },
+
+    // Monthly plans stay active until the paid period ends.
+    async cancel() {
+      await wait(300);
+      const u = auth.current();
+      if (u && u.plan && u.plan.id === "monthly") { u.plan.cancelled = true; saveUser(u); }
+      return u;
+    },
+
+    async resume() {
+      const u = auth.current();
+      if (u && u.plan && u.plan.id === "monthly") { u.plan.cancelled = false; saveUser(u); }
+      return u;
+    }
+  };
+
+  window.LingoServices = { auth, billing };
+})();
 </script>
 <script>
 (function () {
 "use strict";
 
+const CFG = window.LINGO_CONFIG;
+const SVC = window.LingoServices;
 const DATA = window.LINGO_DATA;
 
 const W = [];
@@ -516,13 +1030,28 @@ DATA.forEach((b, bi) => b.w.forEach((r, k) => W.push({
   en: r[5], x: r[6], xe: r[7], f: r[8], alt: r[9] || []
 })));
 
-const GOAL = 2000;
-const POS = { noun: "noun", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", interj: "interjection", phrase: "phrase", num: "number" };
+const GOAL_WORDS = 2000;
+const POS = { noun: "noun", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", interj: "interjection", phrase: "phrase", num: "number", conj: "conjunction" };
 const GENDER = { der: "masculine", die: "feminine", das: "neuter" };
 const PRAISE = [["Super!", "Great!"], ["Sehr gut!", "Very good!"], ["Genau!", "Exactly!"], ["Prima!", "Nice one!"], ["Toll!", "Brilliant!"], ["Wunderbar!", "Wonderful!"], ["Richtig!", "Correct!"]];
 const TYPE_LABEL = { mcDE: "Multiple choice", mcEN: "Multiple choice", listen: "Listening", fill: "Fill in the blank", type: "Quick translation", article: "der, die or das?" };
-const ICON_SPK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-const ICON_SET = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M18 7h2M4 17h3M12 17h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="15.5" cy="7" r="2.3" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="9.5" cy="17" r="2.3" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+const GOALS = [[20, "Casual"], [50, "Regular"], [100, "Serious"], [150, "Intense"]];
+
+const sv = (d, extra) => `<svg viewBox="0 0 24 24" aria-hidden="true"${extra || ""}>${d}</svg>`;
+const ST = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+const ICON = {
+  spk: sv(`<path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.6 6a8.5 8.5 0 0 1 0 12" ${ST}/>`),
+  cards: sv(`<rect x="3" y="6.5" width="13" height="14.5" rx="2" ${ST}/><path d="M8 3h11a2 2 0 0 1 2 2v13" ${ST}/>`),
+  box: sv(`<path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" ${ST}/><path d="M6 9V4h12v5M9.5 13h5" ${ST}/>`),
+  user: sv(`<circle cx="12" cy="8" r="4" ${ST}/><path d="M4 21a8 8 0 0 1 16 0" ${ST}/>`),
+  sliders: sv(`<path d="M4 7h9M18 7h2M4 17h3M12 17h8" ${ST}/><circle cx="15.5" cy="7" r="2.3" ${ST}/><circle cx="9.5" cy="17" r="2.3" ${ST}/>`),
+  lock: sv(`<rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="currentColor" stroke-width="2.2"/>`),
+  crown: sv(`<path d="M3 7.5l4.5 4L12 4.5l4.5 7 4.5-4-2 11.5H5z" fill="currentColor"/>`),
+  back: sv(`<path d="M15 5l-7 7 7 7" ${ST} stroke-width="2.4"/>`),
+  logout: sv(`<path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9" ${ST}/>`),
+  check: sv(`<path d="M5 12.5l4.5 4.5L19 7.5" ${ST} stroke-width="2.6"/>`),
+  dash: sv(`<path d="M7 12h10" ${ST}/>`)
+};
 
 /* ---------- helpers ---------- */
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -530,6 +1059,9 @@ function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { co
 const full = w => (w.a ? w.a + " " : "") + w.w;
 const fmt = n => n.toLocaleString("en-US");
 const level = xp => Math.floor(xp / 100) + 1;
+const fmtDate = ts => new Date(ts).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+function money(v) { try { return new Intl.NumberFormat("en-US", { style: "currency", currency: CFG.currency }).format(v); } catch (e) { return "$" + v; } }
+const priceText = p => money(p.price) + (p.period ? " / " + p.period : " once");
 function norm(s) {
   return String(s).toLowerCase().replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
     .replace(/[.,!?¿¡;:"“”„'’]/g, "").replace(/\s+/g, " ").trim();
@@ -545,14 +1077,29 @@ function lev(a, b) {
   return prev[b.length];
 }
 const toTop = () => { try { window.scrollTo(0, 0); } catch (e) {} };
+const readJSON = k => { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } };
+const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const removeKey = k => { try { localStorage.removeItem(k); } catch (e) {} };
+const dayKey = (d = new Date()) => d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+function hueOf(s) { let h = 0; for (const ch of String(s)) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; }
+const initials = n => String(n).trim().split(/\s+/).slice(0, 2).map(x => x[0] || "").join("").toUpperCase() || "?";
 
-/* ---------- speech ---------- */
+/* ---------- preferences (per device) ---------- */
+const PREF_KEY = "lingocards:prefs:v1";
+const PR = Object.assign({ auto: true, rate: "normal", typing: true, goal: 50, theme: "system", sfx: true }, readJSON(PREF_KEY) || {});
+const savePrefs = () => writeJSON(PREF_KEY, PR);
+function applyTheme() {
+  const r = document.documentElement;
+  if (PR.theme === "light" || PR.theme === "dark") r.setAttribute("data-theme", PR.theme);
+  else if (applyTheme.touched) r.removeAttribute("data-theme");
+}
+
+/* ---------- speech + sound ---------- */
 const canSpeak = typeof window.speechSynthesis !== "undefined" && typeof window.SpeechSynthesisUtterance !== "undefined";
 let deVoice = null;
 function pickVoice() {
   try {
-    const vs = window.speechSynthesis.getVoices() || [];
-    const de = vs.filter(v => /^de([-_]|$)/i.test(v.lang));
+    const de = (window.speechSynthesis.getVoices() || []).filter(v => /^de([-_]|$)/i.test(v.lang));
     deVoice = de.find(v => /google|natural|online/i.test(v.name)) || de[0] || null;
   } catch (e) { deVoice = null; }
 }
@@ -562,26 +1109,77 @@ function speak(text) {
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = "de-DE"; if (deVoice) u.voice = deVoice; u.rate = 0.88;
+    u.lang = "de-DE"; if (deVoice) u.voice = deVoice; u.rate = PR.rate === "slow" ? 0.68 : 0.92;
     window.speechSynthesis.speak(u);
   } catch (e) {}
 }
-const speakBtn = text => canSpeak ? `<button type="button" class="speak" data-act="speak" data-say="${esc(text)}" aria-label="Play pronunciation">${ICON_SPK}</button>` : "";
+const speakBtn = (text, cls) => canSpeak ? `<button type="button" class="speak ${cls || ""}" data-act="speak" data-say="${esc(text)}" aria-label="Play pronunciation">${ICON.spk}</button>` : "";
 
-/* ---------- progress: this browser first, then your account when the viewer offers it ---------- */
-const KEY = "lingocards:de-en:v1";
-function fresh() { return { v: 1, xp: 0, streak: 0, best: 0, words: {}, batches: {}, auto: true, updatedAt: 0 }; }
+let actx = null;
+function tone(freqs, dur, type, gain) {
+  if (!PR.sfx) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const t0 = actx.currentTime + 0.01;
+    freqs.forEach((f, i) => {
+      const o = actx.createOscillator(), g = actx.createGain(), s = t0 + i * dur;
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(0.0001, s);
+      g.gain.exponentialRampToValueAtTime(gain, s + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, s + dur);
+      o.connect(g); g.connect(actx.destination);
+      o.start(s); o.stop(s + dur + 0.03);
+    });
+  } catch (e) {}
+}
+const sfx = {
+  good: () => tone([660, 990], 0.08, "triangle", 0.07),
+  bad: () => tone([233, 175], 0.13, "sawtooth", 0.035),
+  hit: () => tone([180, 110], 0.09, "square", 0.05),
+  win: () => tone([523, 659, 784, 1047], 0.1, "triangle", 0.07),
+  level: () => tone([784, 988, 1175], 0.09, "triangle", 0.06)
+};
+
+/* ---------- account + progress ---------- */
+let user = SVC.auth.current();
+const premium = () => SVC.billing.isPremium(user);
+const uid = () => (user ? user.id : null);
+const progKey = id => "lingocards:progress:v2:" + (id || "guest");
+
+function fresh() { return { v: 2, xp: 0, streak: 0, best: 0, words: {}, batches: {}, days: {}, bestDays: 0, updatedAt: 0 }; }
 function normalize(p) {
   const f = fresh();
   if (!p || typeof p !== "object") return f;
-  return Object.assign(f, p, { words: Object.assign({}, p.words || {}), batches: Object.assign({}, p.batches || {}) });
+  return Object.assign(f, p, { words: Object.assign({}, p.words || {}), batches: Object.assign({}, p.batches || {}), days: Object.assign({}, p.days || {}) });
 }
-function loadLocal() { try { const s = localStorage.getItem(KEY); return s ? normalize(JSON.parse(s)) : null; } catch (e) { return null; } }
-function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(P)); } catch (e) {} }
-let P = loadLocal() || fresh();
-
-const remote = { ref: null, state: "local", pushing: false, again: false, timer: null, retried: false };
+function loadProgress(id) {
+  let p = readJSON(progKey(id));
+  if (!p && !id) {
+    const old = readJSON("lingocards:de-en:v1"); // version 1 save
+    if (old) { p = old; if (typeof old.auto === "boolean") { PR.auto = old.auto; savePrefs(); } }
+  }
+  return normalize(p);
+}
+let P = loadProgress(uid());
+const saveLocal = () => writeJSON(progKey(uid()), P);
 function save() { P.updatedAt = Date.now(); saveLocal(); scheduleRemote(); }
+
+function switchUser(next, mergeGuest) {
+  const guestP = P;
+  user = next;
+  if (next) {
+    let acc = readJSON(progKey(next.id));
+    if (!acc && mergeGuest && guestP.updatedAt) { acc = guestP; removeKey(progKey(null)); }
+    P = normalize(acc);
+  } else {
+    P = loadProgress(null);
+  }
+  saveLocal();
+  syncRemote();
+}
+
+/* Inside the Claude artifact viewer, progress is also kept in the artifact's private store. */
+const remote = { db: null, cid: null, ref: null, state: "local", pushing: false, again: false, timer: null, retried: false };
 function scheduleRemote() { if (!remote.ref) return; clearTimeout(remote.timer); remote.timer = setTimeout(pushRemote, 1200); }
 async function pushRemote() {
   if (!remote.ref) return;
@@ -599,24 +1197,31 @@ async function initRemote() {
   const c = window.claude;
   if (!c || typeof c.use !== "function") return;
   try {
-    const [db, user] = await Promise.all([c.use("db"), c.use("user")]);
-    if (!db || !user) return;
-    const id = await user.id();
+    const [db, u] = await Promise.all([c.use("db"), c.use("user")]);
+    if (!db || !u) return;
+    const id = await u.id();
     if (!id) return;
-    const ref = db.doc("data/users/" + id + "/progress");
-    remote.state = "syncing"; renderSync();
+    remote.db = db; remote.cid = id;
+    await syncRemote();
+  } catch (e) { remote.state = "local"; renderSync(); }
+}
+async function syncRemote() {
+  if (!remote.db) return;
+  const forUid = uid();
+  try {
+    const ref = remote.db.doc("data/users/" + remote.cid + "/" + (forUid ? "progress_" + forUid : "progress"));
+    remote.ref = null; remote.state = "syncing"; renderSync();
     const slow = setTimeout(() => { if (remote.state === "syncing") { remote.state = "slow"; renderSync(); } }, 10000);
     const snap = await ref.get();
     clearTimeout(slow);
+    if (uid() !== forUid) return;
     remote.ref = ref;
     const theirs = snap.exists ? snap.data() : null;
     if (theirs && (theirs.updatedAt || 0) > (P.updatedAt || 0)) {
       P = normalize(JSON.parse(JSON.stringify(theirs)));
       saveLocal();
-      if (view === "home") render();
-    } else if (P.updatedAt && (!theirs || (P.updatedAt || 0) > (theirs.updatedAt || 0))) {
-      pushRemote();
-    }
+      if (!S) render();
+    } else if (P.updatedAt && (!theirs || P.updatedAt > (theirs.updatedAt || 0))) pushRemote();
     remote.state = "synced"; renderSync();
   } catch (e) { remote.state = "local"; remote.ref = null; renderSync(); }
 }
@@ -624,37 +1229,50 @@ function syncText() {
   return ({
     local: "Progress is saved in this browser.",
     syncing: "Loading your saved progress…",
-    slow: "Your account can't be reached yet. Progress is saved in this browser for now.",
-    synced: "Progress is saved to your account."
+    slow: "Your saved progress can't be reached yet. It's kept in this browser for now.",
+    synced: "Progress is saved to your Claude account."
   })[remote.state] || "";
 }
-function renderSync() { const el = document.getElementById("sync"); if (el) el.textContent = syncText(); }
+function renderSync() { document.querySelectorAll("[data-sync]").forEach(el => { el.textContent = syncText(); }); }
 
 /* ---------- derived ---------- */
 const wordRec = id => P.words["w" + id];
 function learnedIds() { return W.filter(w => { const r = wordRec(w.id); return r && r.b >= 1; }).map(w => w.id); }
 const batchDone = i => !!(P.batches["b" + i] && P.batches["b" + i].done);
 const unlocked = i => i === 0 || batchDone(i - 1);
+const batchLocked = i => i >= CFG.freeBatches && !premium();
 function nextBatch() { for (let i = 0; i < DATA.length; i++) if (!batchDone(i)) return i; return -1; }
+const todayXP = () => P.days[dayKey()] || 0;
+function dayStreak() {
+  let n = 0; const d = new Date();
+  if (!P.days[dayKey(d)]) d.setDate(d.getDate() - 1);
+  while ((P.days[dayKey(d)] || 0) > 0) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
 
-/* ---------- toast ---------- */
+/* ---------- toast + scoring ---------- */
 let toastT = null;
 function toast(msg) {
   const el = document.getElementById("toast");
   el.textContent = msg; el.hidden = false;
   el.classList.remove("show"); void el.offsetWidth; el.classList.add("show");
-  clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2600);
+  clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 2800);
 }
 function addXP(n) {
-  const before = level(P.xp);
+  const lvBefore = level(P.xp), dayBefore = todayXP(), k = dayKey();
   P.xp += n;
-  if (level(P.xp) > before) toast("Level " + level(P.xp) + " erreicht! You reached level " + level(P.xp) + ".");
+  P.days[k] = (P.days[k] || 0) + n;
+  const keys = Object.keys(P.days).sort();
+  while (keys.length > 120) delete P.days[keys.shift()];
+  P.bestDays = Math.max(P.bestDays || 0, dayStreak());
+  if (dayBefore < PR.goal && todayXP() >= PR.goal) { toast("Tagesziel erreicht! Daily goal done: " + PR.goal + " XP."); sfx.win(); }
+  else if (level(P.xp) > lvBefore) { toast("Level " + level(P.xp) + " erreicht! You reached level " + level(P.xp) + "."); sfx.level(); }
 }
-function bumpStreak() {
+function bumpCombo() {
   P.streak++;
   if (P.streak > P.best) P.best = P.streak;
   if (S) S.runBest = Math.max(S.runBest || 0, P.streak);
-  if ([5, 10, 15, 20, 30, 50, 75, 100].includes(P.streak)) toast("🔥 " + P.streak + " in a row! " + P.streak + "er-Serie!");
+  if ([5, 10, 15, 20, 30, 50, 75, 100].includes(P.streak)) toast("⚡ " + P.streak + " in a row! " + P.streak + "er-Serie!");
 }
 function recordWord(id, ok) {
   const r = Object.assign({ b: 0, s: 0, c: 0, t: 0 }, wordRec(id) || {});
@@ -663,15 +1281,29 @@ function recordWord(id, ok) {
   P.words["w" + id] = r;
 }
 
-/* ---------- state ---------- */
-let view = "home";
+/* ---------- state + routing ---------- */
 let S = null;
-const ui = { settings: false, confirmReset: false, quitArmed: false };
-let quitT = null;
+const ui = {
+  confirmReset: false, quitArmed: false, authMode: "login", authError: "", authDraft: {}, authNote: "",
+  after: null, plan: "monthly", modal: null, confirmCancel: false, editName: false, nameError: "", busy: false
+};
+let quitT = null, lastView = null;
+const ROUTES = ["learn", "review", "profile", "options", "premium", "play"];
+const route = () => { const h = (location.hash || "").slice(1); return ROUTES.includes(h) ? h : "learn"; };
+function go(to) {
+  const h = to === "learn" ? "" : to;
+  if ((location.hash || "").slice(1) === h) { render(); toTop(); } else location.hash = h;
+}
+window.addEventListener("hashchange", () => {
+  if (route() !== "play" && S) { S = null; ui.quitArmed = false; }
+  ui.confirmReset = false; ui.confirmCancel = false;
+  render(); toTop();
+});
 
 /* ---------- question building ---------- */
 function typesFor(w) {
-  const t = ["mcDE", "mcEN", "fill", "type"];
+  const t = ["mcDE", "mcEN", "fill"];
+  if (PR.typing) t.push("type");
   if (w.p === "noun") t.push("article");
   if (deVoice) t.push("listen");
   return t;
@@ -714,7 +1346,6 @@ function buildQ(id, type, retry) {
   return q;
 }
 function buildQueue(ids) { const types = assignTypes(ids); return ids.map((id, i) => buildQ(id, types[i], false)); }
-
 function checkTyped(w, input) {
   let s = norm(input), art = null;
   const m = s.match(/^(der|die|das) (.+)$/);
@@ -735,7 +1366,7 @@ function hintText(q) {
     case "type": return "It starts with “" + w.w[0] + "”, has " + letters + " letters" + (/\s/.test(w.w) ? " in two words" : "") + ", and sounds like “" + w.ph + "”.";
     case "article": {
       const s = w.w.toLowerCase();
-      if (/(ung|heit|keit|schaft|ion|ie)$/.test(s)) return "Nouns ending in -ung, -heit, -keit, -ion or -ie are almost always die.";
+      if (/(ung|heit|keit|schaft|ion|ie|thek)$/.test(s)) return "Nouns ending in -ung, -heit, -keit, -ion, -ie or -thek are almost always die.";
       if (/(chen|lein)$/.test(s)) return "Nouns ending in -chen or -lein are always das.";
       return "Think back to the card's tab: blue is der, red is die, green is das.";
     }
@@ -750,23 +1381,22 @@ function answerText(q) {
   return full(w);
 }
 
-/* ---------- flow ---------- */
+/* ---------- play flow ---------- */
 function startBatch(bi) {
+  if (batchLocked(bi)) { go("premium"); return; }
   const ids = DATA[bi].w.map((_, k) => bi * 10 + k);
   S = { mode: "batch", bi, sets: [ids.slice(0, 3), ids.slice(3, 6), ids.slice(6)], set: 0, phase: "deal", deal: 0, flipped: false,
         queue: [], qi: 0, fb: null, done: 0, total: ids.length, first: 0, xp0: P.xp, runBest: 0, boss: null, result: null };
-  view = "session"; ui.quitArmed = false; render(); toTop(); autoSpeakCard();
+  ui.quitArmed = false; go("play"); autoSpeakCard();
 }
 function startReview() {
+  if (!premium()) { go("premium"); return; }
   const ids = learnedIds().sort((a, b) => (wordRec(a).b - wordRec(b).b) || ((wordRec(a).t || 0) - (wordRec(b).t || 0))).slice(0, 6);
   if (ids.length < 3) return;
   S = { mode: "review", ids, phase: "quiz", queue: buildQueue(shuffle(ids)), qi: 0, fb: null, done: 0, total: ids.length, first: 0, xp0: P.xp, runBest: 0, result: null };
-  view = "session"; ui.quitArmed = false; render(); toTop();
+  ui.quitArmed = false; go("play");
 }
-function autoSpeakCard() {
-  if (!P.auto || !S || S.phase !== "deal") return;
-  speak(full(W[S.sets[S.set][S.deal]]));
-}
+function autoSpeakCard() { if (PR.auto && S && S.phase === "deal") speak(full(W[S.sets[S.set][S.deal]])); }
 function flip() {
   if (!S || S.phase !== "deal") return;
   S.flipped = !S.flipped;
@@ -787,26 +1417,24 @@ function submit(value) {
   const res = q.type === "type" ? checkTyped(w, String(value || "")) : (q.options[value] === q.answer ? "ok" : "no");
   if (res === "ok" || res === "typo") {
     q.done = true;
-    const firstTry = q.tries === 0;
-    const gain = firstTry ? 10 : 5;
+    const firstTry = q.tries === 0, gain = firstTry ? 10 : 5;
     addXP(gain);
-    if (firstTry) bumpStreak();
+    if (firstTry) bumpCombo();
     if (!q.retry) { S.done++; if (firstTry) S.first++; recordWord(q.id, firstTry); }
     if (q.type === "type") q.last = String(value);
     S.fb = { kind: "good", gain, firstTry, praise: PRAISE[Math.floor(Math.random() * PRAISE.length)], typo: res === "typo" };
-    if (P.auto) speak(full(w));
+    sfx.good();
+    if (PR.auto) setTimeout(() => speak(full(w)), 180);
   } else {
-    P.streak = 0;
-    q.tries++;
+    P.streak = 0; q.tries++;
     if (typeof value === "number") q.disabled.push(value);
     if (q.type === "type") q.last = String(value);
     if (q.tries >= 2) {
       q.done = true;
       if (!q.retry) { S.done++; recordWord(q.id, false); S.queue.push(buildQ(q.id, otherType(q), true)); }
       S.fb = { kind: "reveal" };
-    } else {
-      S.fb = { kind: "hint", article: res === "article" };
-    }
+    } else S.fb = { kind: "hint", article: res === "article" };
+    sfx.bad();
   }
   save(); render();
 }
@@ -824,8 +1452,7 @@ function startBoss() {
   let c = S.sets.flat().map(id => ({ id, t: tokens(W[id].x), en: W[id].xe, x: W[id].x })).filter(r => r.t.length >= 3 && r.t.length <= 7);
   c = shuffle(c).sort((a, b) => b.t.length - a.t.length).slice(0, 4);
   S.boss = { rounds: shuffle(c), r: 0, hp: c.length, max: c.length, hearts: 3, state: "intro", picked: [], pool: [], hint: 0 };
-  setupRound();
-  S.boss.state = "intro";
+  setupRound(); S.boss.state = "intro";
   S.phase = "boss"; render(); toTop();
 }
 function setupRound() {
@@ -838,14 +1465,14 @@ function resetBoss() { const B = S.boss; B.rounds = shuffle(B.rounds); B.r = 0; 
 function bossCheck() {
   const B = S.boss, rd = B.rounds[B.r];
   if (B.picked.length !== B.pool.length) return;
-  const built = B.picked.map(pi => B.pool[pi].t).join(" ");
-  if (built === rd.t.join(" ")) {
-    B.hp--; addXP(15); bumpStreak();
-    if (B.hp === 0) { B.state = "won"; addXP(50); } else B.state = "hit";
+  if (B.picked.map(pi => B.pool[pi].t).join(" ") === rd.t.join(" ")) {
+    B.hp--; addXP(15); bumpCombo();
+    if (B.hp === 0) { B.state = "won"; addXP(50); sfx.win(); } else { B.state = "hit"; sfx.hit(); }
     speak(rd.x);
   } else {
     P.streak = 0; B.hearts--; B.hint++;
     B.state = B.hearts <= 0 ? "lost" : "miss";
+    sfx.bad();
   }
   save(); render();
 }
@@ -859,96 +1486,269 @@ function finish() {
   S.result = { stars, acc, gained: P.xp - S.xp0 };
   S.phase = "results"; save(); render(); toTop();
 }
-function goHome() { view = "home"; S = null; ui.quitArmed = false; render(); toTop(); }
+function goHome() { S = null; ui.quitArmed = false; go("learn"); }
 function quit() {
   if (!S || S.phase === "results" || ui.quitArmed) return goHome();
   ui.quitArmed = true;
   const b = document.querySelector(".x");
-  if (b) { b.textContent = "Leave?"; b.classList.add("armed"); b.setAttribute("aria-label", "Tap again to leave this batch"); }
+  if (b) { b.textContent = "Leave?"; b.classList.add("armed"); b.setAttribute("aria-label", "Tap again to leave"); }
   clearTimeout(quitT);
   quitT = setTimeout(() => {
     ui.quitArmed = false;
     const x = document.querySelector(".x");
-    if (x) { x.textContent = "✕"; x.classList.remove("armed"); x.setAttribute("aria-label", "Leave batch"); }
+    if (x) { x.textContent = "✕"; x.classList.remove("armed"); x.setAttribute("aria-label", "Leave"); }
   }, 3000);
 }
 
-/* ---------- views ---------- */
+/* ---------- shared pieces ---------- */
 function starsHTML(n) { return [0, 1, 2].map(i => i < n ? "★" : '<span class="off">★</span>').join(""); }
+function avatarHTML(u, size) {
+  const st = `width:${size}px;height:${size}px;font-size:${Math.round(size * 0.4)}px`;
+  if (!u) return `<span class="avatar guest" style="${st}">${ICON.user}</span>`;
+  return `<span class="avatar" style="${st};background:hsl(${hueOf(u.id)} 50% 42%)">${esc(initials(u.name))}</span>`;
+}
+function topbarHTML() {
+  return `<header class="topbar"><div class="topbar-in">
+    <button class="brand" data-act="go" data-to="learn" aria-label="LingoCards home">Lingo<span>Cards</span></button>
+    <span class="plate plate-sm" aria-label="German to English"><b>DE</b><span>→ EN</span></span>
+    <div class="tb-right">
+      ${premium() ? `<span class="pro-chip">${ICON.crown}Premium</span>` : `<button class="pro-chip pro-chip-up" data-act="go" data-to="premium">${ICON.crown}Go Premium</button>`}
+      <button class="avatar-btn" data-act="go" data-to="profile" aria-label="${user ? "Your profile" : "Log in"}">${avatarHTML(user, 36)}</button>
+    </div></div></header>`;
+}
+function tabbarHTML(active) {
+  const tabs = [["learn", "Learn", ICON.cards], ["review", "Review", ICON.box], ["profile", user ? "Profile" : "Log in", ICON.user], ["options", "Options", ICON.sliders]];
+  return `<nav class="tabbar" aria-label="Main"><div class="tabbar-in">${tabs.map(([id, label, ic]) =>
+    `<button class="tab-btn ${active === id ? "on" : ""}" data-act="go" data-to="${id}" ${active === id ? 'aria-current="page"' : ""}>${ic}<span>${label}</span></button>`).join("")}</div></nav>`;
+}
+function ringHTML(val, max) {
+  const r = 42, c = 2 * Math.PI * r, pct = Math.min(1, val / max);
+  return `<div class="ring" role="img" aria-label="${val} of ${max} XP today">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/>
+    ${pct > 0 ? `<circle cx="50" cy="50" r="${r}" fill="none" stroke="var(--sign)" stroke-width="10" stroke-linecap="round" stroke-dasharray="${(c * pct).toFixed(1)} ${c.toFixed(1)}"/>` : ""}</svg>
+    <div class="ring-c"><b>${val}</b><span>of ${max} XP</span></div></div>`;
+}
+function greeting() { const h = new Date().getHours(); return h < 11 ? "Guten Morgen" : h < 18 ? "Guten Tag" : "Guten Abend"; }
+function germanDate() { try { return new Intl.DateTimeFormat("de-DE", { weekday: "long", day: "numeric", month: "long" }).format(new Date()); } catch (e) { return ""; } }
 
-function homeHTML() {
-  const lv = level(P.xp), into = P.xp % 100;
-  const learned = learnedIds();
-  const nb = nextBatch();
-  const boxes = [0, 0, 0, 0, 0];
-  learned.forEach(id => { boxes[Math.min(5, wordRec(id).b) - 1]++; });
-  const maxBox = Math.max(1, ...boxes);
-  const doneCount = DATA.filter((_, i) => batchDone(i)).length;
-  const voiceNote = !canSpeak ? "This browser has no speech voices, so audio is off."
-    : deVoice ? "Using the German voice “" + deVoice.name + "”." : "No German voice was found in this browser, so words are read by its default voice.";
-
-  const nextBlock = nb >= 0 ? (() => {
-    const b = DATA[nb];
-    const started = b.w.some((_, k) => wordRec(nb * 10 + k));
-    return `<section class="karte has-tab" aria-label="Next batch">
-      <span class="tab tab-next">Next up</span>
-      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
-      <div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
-      <p class="next-meta">Starts with <b>${b.w.slice(0, 3).map(r => esc(r[0] ? r[0] + " " + r[1] : r[1])).join(" · ")}</b>. Three rounds of cards and quizzes, then a boss: <b>${esc(b.boss.n)}</b> ${esc(b.boss.e)}</p>
-      <button class="btn btn-primary btn-wide" data-act="start" data-b="${nb}">${started ? "Play batch " + (nb + 1) + " again from the start" : "Deal the first 3 cards"}</button>
-    </section>`;
-  })() : `<section class="karte has-tab"><span class="tab tab-next">Deck done</span>
+/* ---------- views: learn ---------- */
+function learnHTML() {
+  const learned = learnedIds(), nb = nextBatch(), lv = level(P.xp), into = P.xp % 100, tx = todayXP(), ds = dayStreak();
+  const first = user ? user.name.split(/\s+/)[0] : "";
+  const line = tx >= PR.goal ? "Daily goal done. Tagesziel erreicht!"
+    : ds ? `You're on a ${ds}-day streak. ${PR.goal - tx} XP to go today.`
+    : `Earn ${PR.goal} XP today to start a streak.`;
+  return `<section class="hello"><p class="date">${esc(germanDate())}</p>
+      <h1>${greeting()}${first ? `, <span>${esc(first)}</span>` : ""}!</h1><p>${esc(line)}</p></section>
+    <section class="today" aria-label="Today">
+      ${ringHTML(tx, PR.goal)}
+      <dl class="minis">
+        <div class="mini"><dt>Day streak</dt><dd>🔥 ${ds}</dd></div>
+        <div class="mini"><dt>Words</dt><dd>${learned.length}<small> / ${fmt(GOAL_WORDS)}</small></dd></div>
+        <div class="mini mini-wide"><dt>Level ${lv} · ${fmt(P.xp)} XP</dt><dd class="lvl"><span class="bar"><i style="width:${into}%"></i></span><small>${into}/100</small></dd></div>
+      </dl>
+    </section>
+    ${nextBlockHTML(nb)}
+    ${premium() ? "" : `<button class="pro-banner" data-act="go" data-to="premium"><span class="medal">${ICON.crown}</span>
+      <span class="pb-text"><b>LingoCards Premium</b><span>Unlock all ${DATA.length} batches, every boss and review mode.</span></span><span class="go">See plans</span></button>`}
+    ${routeHTML()}
+    <footer class="foot"><p data-sync>${esc(syncText())}</p></footer>`;
+}
+function nextBlockHTML(nb) {
+  if (nb < 0) return `<section class="karte has-tab"><span class="tab tab-next">Deck done</span>
       <div class="k-head"><span>All ${DATA.length} batches</span><span>Cards 1–${W.length}</span></div>
       <h2 class="next-title">Every card in this deck is learned</h2>
       <p class="next-meta">Keep reviewing to move cards up to box 5, or replay any batch from the route below.</p></section>`;
+  const b = DATA[nb];
+  if (batchLocked(nb)) return `<section class="karte has-tab next-pro"><span class="tab tab-pro">Premium</span>
+      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
+      <div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
+      <p class="next-meta">You've finished the free batches. Premium unlocks this batch and ${DATA.length - nb - 1} more, with ${(DATA.length - nb) * 10} new words and their bosses.</p>
+      <button class="btn btn-sign btn-wide" data-act="go" data-to="premium">${ICON.crown} Unlock with Premium</button></section>`;
+  const started = b.w.some((_, k) => wordRec(nb * 10 + k));
+  return `<section class="karte has-tab"><span class="tab tab-next">Next up</span>
+      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
+      <div class="next-row"><div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
+        <span class="boss-mini" style="--h:${hueOf(b.boss.n)}" title="Boss: ${esc(b.boss.n)}">${b.boss.e}</span></div>
+      <p class="next-meta">Starts with <b>${b.w.slice(0, 3).map(r => esc(r[0] ? r[0] + " " + r[1] : r[1])).join(" · ")}</b>. Three rounds of cards and quizzes, then the boss <b>${esc(b.boss.n)}</b>.</p>
+      <button class="btn btn-primary btn-wide" data-act="start" data-b="${nb}">${started ? "Restart batch " + (nb + 1) : "Deal the first 3 cards"}</button></section>`;
+}
+function routeHTML() {
+  const doneCount = DATA.filter((_, i) => batchDone(i)).length;
+  const rows = DATA.map((b, i) => {
+    const st = P.batches["b" + i], open = unlocked(i), locked = batchLocked(i);
+    const cls = st && st.done ? "done" : locked ? "pro" : open ? "open" : "locked";
+    const end = st && st.done ? `<span aria-label="${st.stars} of 3 stars">${starsHTML(st.stars)}</span>`
+      : locked ? `<span class="badge badge-pro">${ICON.lock}Premium</span>` : open ? "Start" : "Locked";
+    const div = i === CFG.freeBatches ? `<li class="route-div is-pro"><span>${ICON.crown} Premium line · batches ${i + 1}–${DATA.length}</span></li>` : "";
+    return div + `<li class="stn ${cls} ${i >= CFG.freeBatches ? "is-pro" : ""}"><button class="stn-btn" data-act="${locked ? "go" : "start"}" data-to="premium" data-b="${i}" ${open || locked ? "" : "disabled"}>
+        <span class="dot" aria-hidden="true"></span>
+        <span class="stn-main"><span class="stn-t">${i + 1}. ${esc(b.t)}</span><span class="stn-de">${esc(b.de)} · cards ${i * 10 + 1}–${i * 10 + 10}</span></span>
+        <span class="stn-end">${end}</span></button></li>`;
+  }).join("");
+  return `<section class="panel" aria-label="Batches">
+      <div class="panel-head"><h3>Your route</h3><span class="muted small">${doneCount} of ${DATA.length} batches done</span></div>
+      <ol class="route">${rows}
+        <li class="stn future"><div class="future-row"><span class="dot" aria-hidden="true"></span><span class="stn-main"><span class="stn-t">Cards ${W.length + 1}–2,000</span><span class="stn-de">Not in this deck yet</span></span></div></li>
+      </ol></section>`;
+}
 
-  return `<div class="wrap">
-    <header class="masthead">
-      <div><h1 class="logo">Lingo<span>Cards</span></h1><p class="tagline">The 2,000 everyday words, ten at a time</p></div>
-      <div class="mast-right">
-        <div class="plate" aria-label="German to English"><b>Deutsch</b><span>→ English</span></div>
-        <button class="icon-btn" data-act="settings" aria-expanded="${ui.settings}" aria-label="Settings">${ICON_SET}</button>
-      </div>
-    </header>
-    ${ui.settings ? `<section class="panel settings" aria-label="Settings">
-      <div class="panel-head"><h3>Settings</h3></div>
-      <label for="opt-auto"><input type="checkbox" id="opt-auto" ${P.auto ? "checked" : ""} ${canSpeak ? "" : "disabled"}> Read words aloud automatically</label>
-      <p class="muted small">${esc(voiceNote)}</p>
-      ${ui.confirmReset ? `<div class="confirm"><p>Erase all XP, streaks, stars and Leitner boxes? This can't be undone.</p><div class="row"><button class="btn btn-danger" data-act="reset-yes">Erase progress</button><button class="btn btn-ghost" data-act="reset-no">Keep my progress</button></div></div>`
-        : `<button class="btn btn-ghost" data-act="reset">Reset progress</button>`}
-    </section>` : ""}
-    <section class="stats" aria-label="Your progress">
-      <div class="stat stat-xp"><span class="lbl">XP</span><b>${fmt(P.xp)}</b><span class="sub">Level ${lv} · ${into}/100</span><span class="meter"><i style="width:${into}%"></i></span></div>
-      <div class="stat"><span class="lbl">Streak</span><b>${P.streak}</b><span class="sub">Best ${P.best}</span></div>
-      <div class="stat"><span class="lbl">Words</span><b>${learned.length}</b><span class="sub">of ${fmt(GOAL)}</span></div>
-    </section>
-    ${nextBlock}
+/* ---------- views: review ---------- */
+function reviewHTML() {
+  const learned = learnedIds();
+  const boxes = [0, 0, 0, 0, 0];
+  learned.forEach(id => { boxes[Math.min(5, wordRec(id).b) - 1]++; });
+  const maxBox = Math.max(1, ...boxes);
+  const action = !premium() ? `<button class="btn btn-sign" data-act="go" data-to="premium">${ICON.crown} Unlock review with Premium</button>`
+    : learned.length >= 3 ? `<button class="btn btn-primary" data-act="review">Review my ${Math.min(6, learned.length)} weakest cards</button>`
+    : `<p class="small"><b>Learn at least 3 words to start reviewing.</b></p>`;
+  const list = learned.slice().sort((a, b) => (wordRec(a).b - wordRec(b).b) || a - b);
+  return `<h1 class="view-title">Review<span class="de">Wiederholen</span></h1>
     <section class="panel" aria-label="Leitner box">
       <div class="panel-head"><h3>Karteikasten</h3><span class="muted small">your Leitner box</span></div>
       <div class="boxes">${boxes.map((c, i) => `<div class="bx"><span class="bx-n">${c}</span><span class="bx-bar"><i style="height:${(c / maxBox) * 100}%"></i></span><span class="bx-l">Box ${i + 1}</span></div>`).join("")}</div>
       <p class="muted small">A first-try answer moves a card up one box. A miss sends it back to box 1. Review starts with the lowest boxes.</p>
-      ${learned.length >= 3 ? `<button class="btn btn-ghost" data-act="review">Review your ${Math.min(6, learned.length)} weakest cards</button>`
-        : `<p class="small"><b>Finish your first quiz round to unlock review.</b></p>`}
+      ${action}
     </section>
-    <section class="panel" aria-label="Batches">
-      <div class="panel-head"><h3>Your route</h3><span class="muted small">${doneCount} of ${DATA.length} batches done</span></div>
-      <ol class="route">
-        ${DATA.map((b, i) => {
-          const st = P.batches["b" + i], open = unlocked(i);
-          const cls = st && st.done ? "done" : open ? "open" : "locked";
-          return `<li class="stn ${cls}"><button class="stn-btn" data-act="start" data-b="${i}" ${open ? "" : "disabled"}>
-            <span class="dot" aria-hidden="true"></span>
-            <span class="stn-main"><span class="stn-t">${i + 1}. ${esc(b.t)}</span><span class="stn-de">${esc(b.de)} · cards ${i * 10 + 1}–${i * 10 + 10}</span></span>
-            <span class="stn-end">${st && st.done ? `<span aria-label="${st.stars} of 3 stars">${starsHTML(st.stars)}</span>` : open ? "Start" : "Locked"}</span>
-          </button></li>`;
-        }).join("")}
-        <li class="stn future"><div class="future-row"><span class="dot" aria-hidden="true"></span><span class="stn-main"><span class="stn-t">Cards 101–2,000</span><span class="stn-de">Not in this deck yet</span></span></div></li>
-      </ol>
-    </section>
-    <footer class="foot"><p id="sync">${esc(syncText())}</p><p>Pronunciation uses your browser's built-in speech voices.</p></footer>
-  </div>`;
+    <section class="panel" aria-label="Your words">
+      <div class="panel-head"><h3>Wortschatz</h3><span class="muted small">${learned.length} words learned</span></div>
+      ${list.length ? `<ul class="vocab">${list.map(id => {
+        const w = W[id], b = wordRec(id).b;
+        return `<li><span class="v-de">${w.a ? `<span class="art art-${w.a}">${w.a}</span> ` : ""}${esc(w.w)}</span><span class="v-en">${esc(w.en)}</span>
+          <span class="boxdots" role="img" aria-label="Box ${b} of 5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= b ? "on" : ""}"></i>`).join("")}</span>${speakBtn(full(w), "sm")}</li>`;
+      }).join("")}</ul>` : `<p class="empty">Words you learn show up here, sorted with the shakiest first. Start with batch 1 on the Learn tab.</p>`}
+    </section>`;
 }
 
+/* ---------- views: account ---------- */
+function authHTML() {
+  const signup = ui.authMode === "signup", d = ui.authDraft || {};
+  return `<h1 class="view-title">${signup ? "Create your account" : "Welcome back"}<span class="de">${signup ? "Konto erstellen" : "Willkommen zurück"}</span></h1>
+    ${ui.authNote ? `<p class="note-line">${esc(ui.authNote)}</p>` : `<p class="lede-left">Keep your XP, streak and words in one place, and unlock Premium.</p>`}
+    <section class="panel auth">
+      <div class="demo-note"><b>Demo mode</b>Accounts are stored only in this browser. Passwords aren't checked or saved yet.</div>
+      <div class="seg" role="tablist" aria-label="Log in or sign up">
+        <button role="tab" aria-selected="${!signup}" data-act="auth-mode" data-m="login">Log in</button>
+        <button role="tab" aria-selected="${signup}" data-act="auth-mode" data-m="signup">Create account</button>
+      </div>
+      <form id="authform" class="form" novalidate>
+        ${signup ? `<div class="field"><label for="f-name">Name</label><input id="f-name" name="name" autocomplete="name" value="${esc(d.name || "")}" required></div>` : ""}
+        <div class="field"><label for="f-email">Email</label><input id="f-email" name="email" type="email" autocomplete="email" value="${esc(d.email || "")}" required></div>
+        <div class="field"><label for="f-pass">Password</label><input id="f-pass" name="password" type="password" autocomplete="${signup ? "new-password" : "current-password"}" minlength="8" required>
+          ${signup ? `<small class="muted">At least 8 characters.</small>` : ""}</div>
+        ${ui.authError ? `<p class="form-error" role="alert">${esc(ui.authError)}</p>` : ""}
+        <button class="btn btn-primary btn-wide" type="submit" ${ui.busy ? "disabled" : ""}>${ui.busy ? "One moment…" : signup ? "Create account" : "Log in"}</button>
+      </form>
+      <div class="or"><span>or</span></div>
+      <button class="btn btn-ghost btn-wide" disabled>Continue with Google</button>
+      <p class="muted small center">Google sign-in becomes available once real accounts are connected.</p>
+    </section>`;
+}
+function profileHTML() {
+  const u = user, pro = premium(), plan = u.plan;
+  const learned = learnedIds().length, done = DATA.filter((_, i) => batchDone(i)).length;
+  const stars = Object.values(P.batches).reduce((s, b) => s + (b.stars || 0), 0);
+  const monthly = CFG.plans.find(p => p.id === "monthly");
+  let planBody;
+  if (!pro) planBody = `<p>You're on the <b>Free</b> plan, with batches 1–${CFG.freeBatches}.</p><button class="btn btn-sign" data-act="go" data-to="premium">${ICON.crown} See Premium plans</button>`;
+  else if (plan.id === "lifetime") planBody = `<p><b>Premium Lifetime</b> since ${fmtDate(plan.since)}. Every batch is yours for good. Danke!</p>`;
+  else if (plan.cancelled) planBody = `<p><b>Premium Monthly</b>, cancelled. You keep Premium until ${fmtDate(plan.renewsAt)}.</p><button class="btn btn-ghost" data-act="resume">Keep my subscription</button>`;
+  else planBody = `<p><b>Premium Monthly</b> · ${money(monthly ? monthly.price : 0)} a month. Renews on ${fmtDate(plan.renewsAt)}.</p>
+    ${ui.confirmCancel ? `<div class="confirm"><p>Cancel your subscription? You'll keep Premium until ${fmtDate(plan.renewsAt)}.</p><div class="row"><button class="btn btn-danger" data-act="cancel-yes">Cancel subscription</button><button class="btn btn-ghost" data-act="cancel-no">Keep it</button></div></div>`
+      : `<button class="btn btn-ghost" data-act="cancel-ask">Cancel subscription</button>`}`;
+  const stat = (l, v) => `<div><dt>${l}</dt><dd>${v}</dd></div>`;
+  return `<section class="profile-card">
+      ${avatarHTML(u, 72)}
+      <div class="pc-main">
+        ${ui.editName ? `<form id="nameform" class="name-form"><label for="f-rename" class="sr">Your name</label><input id="f-rename" name="name" value="${esc(u.name)}" autocomplete="name" data-autofocus><button class="btn btn-primary" type="submit">Save</button><button class="btn btn-ghost" type="button" data-act="name-cancel">Cancel</button></form>
+          ${ui.nameError ? `<p class="form-error" role="alert">${esc(ui.nameError)}</p>` : ""}`
+          : `<h2>${esc(u.name)} <button class="link-btn" data-act="name-edit">Edit</button></h2>`}
+        <p>${esc(u.email)}</p>
+        <div class="chips">${pro ? `<span class="badge badge-pro">${ICON.crown}Premium</span>` : `<span class="badge">Free plan</span>`}<span class="badge">Member since ${fmtDate(u.createdAt)}</span></div>
+      </div></section>
+    <dl class="stat-grid">${stat("Total XP", fmt(P.xp))}${stat("Level", level(P.xp))}${stat("Words", learned)}${stat("Day streak", "🔥 " + dayStreak())}${stat("Best streak", (P.bestDays || 0) + " d")}${stat("Best combo", "⚡ " + (P.best || 0))}${stat("Batches", done + "/" + DATA.length)}${stat("Stars", "★ " + stars)}${stat("Boxes 4–5", learnedIds().filter(id => wordRec(id).b >= 4).length)}</dl>
+    <section class="panel"><div class="panel-head"><h3>Your plan</h3></div>${planBody}</section>
+    <button class="btn btn-ghost btn-wide" data-act="logout">${ICON.logout} Log out</button>`;
+}
+
+/* ---------- views: options ---------- */
+function optionsHTML() {
+  const seg = (k, opts) => `<div class="seg" role="group">${opts.map(([v, l, s]) => `<button aria-pressed="${String(PR[k]) === String(v)}" data-act="pref" data-k="${k}" data-v="${v}">${l}${s ? `<small>${s}</small>` : ""}</button>`).join("")}</div>`;
+  const sw = (id, on, title, sub, disabled) => `<label class="row-opt" for="${id}"><span><b>${title}</b><small>${sub}</small></span><input type="checkbox" role="switch" class="switch" id="${id}" ${on ? "checked" : ""} ${disabled ? "disabled" : ""}></label>`;
+  const voiceNote = !canSpeak ? "This browser has no speech voices, so audio is off."
+    : deVoice ? "Voice: " + deVoice.name : "No German voice found. Your browser's default voice is used.";
+  return `<h1 class="view-title">Options<span class="de">Einstellungen</span></h1>
+    <section class="panel opts-panel"><div class="panel-head"><h3>Learning</h3></div>
+      <div class="opt-block"><span class="opt-label">Daily goal</span>${seg("goal", GOALS.map(([v, l]) => [v, l, v + " XP"]))}</div>
+      <div class="divider"></div>
+      ${sw("opt-auto", PR.auto, "Read words aloud", "Plays each new card and correct answer. " + voiceNote, !canSpeak)}
+      <div class="opt-block"><span class="opt-label">Speaking speed</span>${seg("rate", [["slow", "Slow"], ["normal", "Normal"]])}</div>
+      <div class="divider"></div>
+      ${sw("opt-typing", PR.typing, "Typing questions", "Turn off to answer with taps only, handy on a phone.")}
+    </section>
+    <section class="panel opts-panel"><div class="panel-head"><h3>Look and sound</h3></div>
+      <div class="opt-block"><span class="opt-label">Theme</span>${seg("theme", [["system", "System"], ["light", "Light"], ["dark", "Dark"]])}</div>
+      <div class="divider"></div>
+      ${sw("opt-sfx", PR.sfx, "Sound effects", "Short tones for right and wrong answers and boss hits.")}
+    </section>
+    <section class="panel opts-panel"><div class="panel-head"><h3>Your data</h3></div>
+      <p class="small muted" data-sync>${esc(syncText())}</p>
+      ${ui.confirmReset ? `<div class="confirm"><p>Erase all XP, streaks, stars and Leitner boxes${user ? " for " + esc(user.name) : ""}? This can't be undone.</p><div class="row"><button class="btn btn-danger" data-act="reset-yes">Erase progress</button><button class="btn btn-ghost" data-act="reset-no">Keep my progress</button></div></div>`
+        : `<button class="btn btn-ghost" data-act="reset">Reset progress</button>`}
+    </section>
+    <section class="panel opts-panel"><div class="panel-head"><h3>About</h3><span class="muted small">Version ${esc(CFG.version)}</span></div>
+      <p class="small">LingoCards teaches the 2,000 most useful German words, ten at a time. This deck has cards 1–${W.length}.</p>
+      <p class="small muted">Accounts and payments are in demo mode: nothing leaves this browser and no money is charged.</p>
+      <p class="small"><a href="${esc(CFG.repoUrl)}" target="_blank" rel="noopener">Source code on GitHub</a></p>
+    </section>`;
+}
+
+/* ---------- views: premium ---------- */
+function premiumHTML() {
+  const pro = premium();
+  const sel = CFG.plans.find(p => p.id === ui.plan) || CFG.plans[0];
+  const row = (label, free, paid) => `<tr><th scope="row">${label}</th><td>${free === true ? `<span class="yes">${ICON.check}</span>` : free === false ? `<span class="no">${ICON.dash}</span>` : free}</td><td>${paid === true ? `<span class="yes">${ICON.check}</span>` : paid}</td></tr>`;
+  return `<button class="back-btn" data-act="back">${ICON.back} Back</button>
+    <section class="pro-hero">
+      <span class="crown">${ICON.crown}</span>
+      <h1>LingoCards Premium</h1>
+      <p>Every batch, every boss and unlimited review, on the way to all 2,000 words.</p>
+    </section>
+    ${pro ? `<section class="panel"><div class="panel-head"><h3>You're Premium</h3></div><p>Everything is unlocked. Manage your plan from your profile.</p><button class="btn btn-primary" data-act="go" data-to="learn">Keep learning</button></section>`
+    : `<div class="plans" role="radiogroup" aria-label="Choose a plan">${CFG.plans.map(p => `<button class="plan" role="radio" aria-checked="${p.id === sel.id}" data-act="plan" data-id="${p.id}">
+          ${p.badge ? `<span class="p-badge">${esc(p.badge)}</span>` : ""}<span class="radio" aria-hidden="true"></span>
+          <span class="p-name">${esc(p.name)}</span><span class="p-price">${money(p.price)}<small>${p.period ? " / " + p.period : " once"}</small></span><span class="p-note">${esc(p.note)}</span></button>`).join("")}</div>
+      <button class="btn btn-sign btn-wide btn-big" data-act="checkout">Continue · ${esc(priceText(sel))}</button>
+      <p class="muted small center">${user ? "Demo mode: no payment is taken." : "You'll create a free account first. Demo mode: no payment is taken."}</p>`}
+    <section class="panel"><div class="panel-head"><h3>Free vs Premium</h3></div>
+      <div class="table-wrap"><table class="compare">
+        <thead><tr><th scope="col"></th><th scope="col">Free</th><th scope="col">Premium</th></tr></thead>
+        <tbody>
+          ${row(`Batches 1–${CFG.freeBatches} (${CFG.freeBatches * 10} words)`, true, true)}
+          ${row(`Batches ${CFG.freeBatches + 1}–${DATA.length} (${(DATA.length - CFG.freeBatches) * 10} words)`, false, true)}
+          ${row("Boss battles", CFG.freeBatches + "", "All " + DATA.length)}
+          ${row("Review sessions", false, true)}
+          ${row("New batches as they're added", false, true)}
+          ${row("Daily goals, streaks and XP", true, true)}
+        </tbody></table></div>
+    </section>`;
+}
+function modalHTML() {
+  const m = ui.modal, p = CFG.plans.find(x => x.id === m.plan);
+  let inner;
+  if (m.state === "confirm") inner = `<h2 id="mh">Checkout</h2>
+      <div class="sum"><span><b>LingoCards Premium</b><span class="muted small">${esc(p.name)} · ${esc(p.note)}</span></span><b class="sum-price">${esc(priceText(p))}</b></div>
+      <div class="demo-note"><b>Demo</b>No payment is taken. Once Stripe is connected, this button opens Stripe's secure checkout page, where card details are entered.</div>
+      <button class="btn btn-sign btn-wide" data-act="pay" data-autofocus>Simulate payment</button>
+      <button class="btn btn-ghost btn-wide" data-act="modal-close">Cancel</button>`;
+  else if (m.state === "processing") inner = `<h2 id="mh" class="center">Processing</h2><div class="spinner" role="progressbar" aria-label="Processing"></div><p class="center muted">Confirming your demo payment…</p>`;
+  else inner = `<div class="stamp-wrap"><div class="stamp stamp-pro">Premium</div></div><h2 id="mh" class="center">Willkommen bei Premium!</h2>
+      <p class="center muted">All ${DATA.length} batches, every boss and review mode are unlocked.</p>
+      <button class="btn btn-primary btn-wide" data-act="modal-done" data-autofocus>Start learning</button>`;
+  return `<div class="modal-back" data-modal-back><div class="modal" role="dialog" aria-modal="true" aria-labelledby="mh">${inner}</div></div>`;
+}
+
+/* ---------- views: play ---------- */
 function sbarHTML() {
   let pct;
   if (S.mode === "batch") {
@@ -956,17 +1756,16 @@ function sbarHTML() {
     pct = (S.done / S.total) * 0.8 + bp * 0.2;
   } else pct = S.phase === "results" ? 1 : S.done / S.total;
   return `<div class="sbar">
-    <button class="x ${ui.quitArmed ? "armed" : ""}" data-act="quit" aria-label="Leave batch">${ui.quitArmed ? "Leave?" : "✕"}</button>
-    <div class="prog ${S.mode === "batch" ? "with-boss" : ""}" role="progressbar" aria-label="Batch progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct * 100)}"><i style="width:${pct * 100}%"></i></div>
+    <button class="x ${ui.quitArmed ? "armed" : ""}" data-act="quit" aria-label="Leave">${ui.quitArmed ? "Leave?" : "✕"}</button>
+    <div class="prog ${S.mode === "batch" ? "with-boss" : ""}" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(pct * 100)}"><i style="width:${pct * 100}%"></i></div>
     <span class="chip chip-xp" aria-label="${P.xp} XP">${fmt(P.xp)} XP</span>
-    <span class="chip" aria-label="Streak ${P.streak}">🔥 ${P.streak}</span>
+    <span class="chip" aria-label="Combo ${P.streak}">⚡ ${P.streak}</span>
   </div>`;
 }
-
 function cardHTML(w, flipped) {
   const g = w.a;
   const tab = g ? `<span class="tab tab-${g}">${g}</span>` : `<span class="tab">${POS[w.p]}</span>`;
-  const head = `<div class="k-head"><span>🎴 Card ${w.n} / ${fmt(GOAL)}</span><span>Category: ${esc(DATA[w.b].t)}</span></div>`;
+  const head = `<div class="k-head"><span>🎴 Card ${w.n} / ${fmt(GOAL_WORDS)}</span><span>Category: ${esc(DATA[w.b].t)}</span></div>`;
   const i = w.x.indexOf(w.f);
   const ex = i < 0 ? esc(w.x) : esc(w.x.slice(0, i)) + "<mark>" + esc(w.f) + "</mark>" + esc(w.x.slice(i + w.f.length));
   return `<div class="flip ${flipped ? "is-flipped" : ""}" role="button" tabindex="0" data-act="flip" aria-label="Flashcard. Press to flip.">
@@ -992,10 +1791,8 @@ function cardHTML(w, flipped) {
         </div>
         <div class="k-foot">Tap to flip back</div>
       </div>
-    </div>
-  </div>`;
+    </div></div>`;
 }
-
 function dealHTML() {
   const ids = S.sets[S.set], w = W[ids[S.deal]], last = S.deal === ids.length - 1;
   return `<div class="phase-head"><span class="eyebrow">New cards · Round ${S.set + 1} of ${S.sets.length}</span><span>Card ${S.deal + 1} of ${ids.length}</span></div>
@@ -1006,12 +1803,11 @@ function dealHTML() {
       <button class="btn btn-primary" data-act="${last ? "quiz" : "nextcard"}" data-autofocus>${last ? "Start the quiz" : "Next card"}</button>
     </div>`;
 }
-
 function promptHTML(q, w) {
   switch (q.type) {
     case "mcDE": return `<h2 class="qprompt">What does <span class="de">${esc(full(w))}</span> mean? ${speakBtn(full(w))}</h2>`;
     case "mcEN": return `<h2 class="qprompt">Which German word means “${esc(w.en)}”?</h2>`;
-    case "listen": return `<h2 class="qprompt">Listen, then pick the word you hear.</h2><button class="btn btn-sign listen-btn" data-act="speak" data-say="${esc(full(w))}">${ICON_SPK} Play the word</button>`;
+    case "listen": return `<h2 class="qprompt">Listen, then pick the word you hear.</h2><button class="btn btn-sign listen-btn" data-act="speak" data-say="${esc(full(w))}">${ICON.spk} Play the word</button>`;
     case "fill": {
       const i = w.x.indexOf(w.f);
       return `<h2 class="qprompt qprompt-de">${esc(w.x.slice(0, i))}<span class="blank ${q.done ? "filled" : ""}">${q.done ? esc(w.f) : '<span class="sr">blank</span>&nbsp;'}</span>${esc(w.x.slice(i + w.f.length))}</h2><p class="qsub">${esc(w.xe)}</p>`;
@@ -1021,7 +1817,6 @@ function promptHTML(q, w) {
   }
   return "";
 }
-
 function quizHTML() {
   const q = S.queue[S.qi], w = W[q.id];
   let body;
@@ -1059,11 +1854,10 @@ function quizHTML() {
   return `<div class="phase-head"><span class="eyebrow">${head}</span><span>${q.retry ? "Second chance" : "Question " + (S.qi + 1) + " of " + S.queue.length}</span></div>
     <div class="qcard"><div class="qtype">${TYPE_LABEL[q.type]}</div>${promptHTML(q, w)}${body}</div>${fb}`;
 }
-
 function bossHTML() {
   const B = S.boss, bd = DATA[S.bi].boss;
   const hearts = [0, 1, 2].map(i => `<span class="heart ${i < B.hearts ? "" : "lost"}" aria-hidden="true">♥</span>`).join("");
-  const head = `<div class="boss-top"><div class="boss-face ${B.state === "hit" || B.state === "won" ? "hit" : ""}" aria-hidden="true">${bd.e}</div>
+  const head = `<div class="boss-top"><div class="boss-face ${B.state === "hit" || B.state === "won" ? "hit" : ""}" style="--h:${hueOf(bd.n)}" aria-hidden="true">${bd.e}</div>
       <div class="boss-id"><span class="boss-eyebrow">Boss battle · Batch ${S.bi + 1}</span><h2 class="boss-name">${esc(bd.n)}</h2><p class="boss-gloss">${esc(bd.g)}</p></div></div>
     <div class="boss-meters"><div class="hp" role="img" aria-label="Boss health ${B.hp} of ${B.max}"><i style="width:${(B.hp / B.max) * 100}%"></i></div>
       <div class="meter-row"><span>HP ${B.hp}/${B.max}</span><span class="hearts" role="img" aria-label="${B.hearts} of 3 hearts left">${hearts}</span></div></div>`;
@@ -1094,35 +1888,47 @@ function bossHTML() {
     <div class="pool" aria-label="Word tiles">${pool}</div>
     ${msg}${actions}</div>`;
 }
-
 function resultsHTML() {
   const r = S.result, batch = S.mode === "batch";
   const ids = batch ? S.sets.flat() : S.ids;
   const nb = batch && S.bi + 1 < DATA.length ? S.bi + 1 : -1;
+  const nextBtn = nb < 0 ? "" : batchLocked(nb)
+    ? `<button class="btn btn-sign" data-act="go" data-to="premium" data-autofocus>${ICON.crown} Unlock batch ${nb + 1}</button>`
+    : `<button class="btn btn-primary" data-act="start" data-b="${nb}" data-autofocus>Next: batch ${nb + 1}</button>`;
   return `<div class="results">
     <div class="stamp-wrap"><div class="stamp">${batch ? "Bestanden" : "Geübt"}</div></div>
     <h2>${batch ? "Batch " + (S.bi + 1) + " complete" : "Review complete"}</h2>
     <p class="lede">${batch ? esc(DATA[S.bi].boss.n) + " is defeated, and " + ids.length + " cards are now in your Leitner box." : "Your Leitner box is updated."}</p>
     <div class="stars" role="img" aria-label="${r.stars} of 3 stars">${starsHTML(r.stars)}</div>
-    <dl class="rstats"><div><dt>XP earned</dt><dd>+${r.gained}</dd></div><div><dt>First try</dt><dd>${S.first}/${S.total}</dd></div><div><dt>Best streak</dt><dd>${S.runBest || 0}</dd></div></dl>
+    <dl class="rstats"><div><dt>XP earned</dt><dd>+${r.gained}</dd></div><div><dt>First try</dt><dd>${S.first}/${S.total}</dd></div><div><dt>Best combo</dt><dd>${S.runBest || 0}</dd></div></dl>
     <ul class="wlist">${ids.map(id => `<li><span class="${W[id].a ? "art-" + W[id].a : ""}">${esc(full(W[id]))}</span><span>${esc(W[id].en)}</span></li>`).join("")}</ul>
-    <div class="row">${nb >= 0 ? `<button class="btn btn-primary" data-act="start" data-b="${nb}" data-autofocus>Next: batch ${nb + 1}</button>` : ""}
-      <button class="btn btn-ghost" data-act="home" ${nb >= 0 ? "" : "data-autofocus"}>Back to the route</button></div>
+    <div class="row">${nextBtn}<button class="btn btn-ghost" data-act="home" ${nb >= 0 ? "" : "data-autofocus"}>Back to the route</button></div>
   </div>`;
 }
+function stageHTML() { return S.phase === "deal" ? dealHTML() : S.phase === "quiz" ? quizHTML() : S.phase === "boss" ? bossHTML() : resultsHTML(); }
 
-function sessionHTML() {
-  const inner = S.phase === "deal" ? dealHTML() : S.phase === "quiz" ? quizHTML() : S.phase === "boss" ? bossHTML() : resultsHTML();
-  return `<div class="wrap">${sbarHTML()}<main class="stage">${inner}</main></div>`;
-}
-
+/* ---------- render ---------- */
 function render() {
   const app = document.getElementById("app");
-  try { app.innerHTML = view === "session" && S ? sessionHTML() : homeHTML(); }
-  catch (err) { console.error(err); view = "home"; S = null; app.innerHTML = homeHTML(); }
-  const af = app.querySelector("[data-autofocus]:not([disabled])");
+  const r = route();
+  let html;
+  try {
+    if (r === "play" && S) html = `<div class="wrap">${sbarHTML()}<main class="stage">${stageHTML()}</main></div>`;
+    else {
+      const v = r === "play" ? "learn" : r;
+      const body = v === "review" ? reviewHTML() : v === "profile" ? (user ? profileHTML() : authHTML()) : v === "options" ? optionsHTML() : v === "premium" ? premiumHTML() : learnHTML();
+      html = topbarHTML() + `<main class="view ${lastView !== v ? "enter" : ""}" id="main">${body}</main>` + tabbarHTML(v === "premium" ? "" : v);
+      lastView = v;
+    }
+  } catch (err) {
+    console.error(err); S = null; lastView = "learn";
+    html = topbarHTML() + `<main class="view">${learnHTML()}</main>` + tabbarHTML("learn");
+  }
+  if (r === "play" && S) lastView = "play";
+  app.innerHTML = html + (ui.modal ? modalHTML() : "");
+  const af = app.querySelector(ui.modal ? ".modal [data-autofocus]:not([disabled])" : "[data-autofocus]:not([disabled])");
   if (af) { try { af.focus({ preventScroll: true }); } catch (e) {} }
-  if (view === "session" && S && S.phase === "quiz") {
+  if (r === "play" && S && S.phase === "quiz") {
     const q = S.queue[S.qi];
     if (q && q.type === "listen" && !q.played) { q.played = true; setTimeout(() => speak(full(W[q.id])), 200); }
   }
@@ -1130,6 +1936,46 @@ function render() {
     const fbEl = app.querySelector(".fb");
     if (fbEl && fbEl.scrollIntoView) { try { fbEl.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch (e) {} }
   }
+}
+
+/* ---------- account + payment actions ---------- */
+async function onAuth(form) {
+  if (ui.busy) return;
+  const fd = new FormData(form);
+  const name = String(fd.get("name") || ""), email = String(fd.get("email") || ""), password = String(fd.get("password") || "");
+  ui.authDraft = { name, email }; ui.authError = ""; ui.busy = true; render();
+  try {
+    const u = ui.authMode === "signup" ? await SVC.auth.signUp({ name, email, password }) : await SVC.auth.logIn({ email, password });
+    const wasGuest = !user;
+    switchUser(u, wasGuest);
+    ui.busy = false; ui.authDraft = {}; ui.authNote = "";
+    toast(ui.authMode === "signup" ? "Willkommen, " + u.name + "! Your account is ready." : "Willkommen zurück, " + u.name + "!");
+    const after = ui.after; ui.after = null;
+    go(after || "learn");
+  } catch (e) {
+    ui.busy = false; ui.authError = e.message || "Something went wrong. Try again."; render();
+    const f = document.getElementById(ui.authMode === "signup" && !name.trim() ? "f-name" : "f-email");
+    if (f) f.focus();
+  }
+}
+async function onRename(form) {
+  try { user = await SVC.auth.updateName(new FormData(form).get("name")); ui.editName = false; ui.nameError = ""; toast("Name saved."); }
+  catch (e) { ui.nameError = e.message; }
+  render();
+}
+async function checkout() {
+  if (!user) { ui.after = "premium"; ui.authMode = "signup"; ui.authNote = "Create a free account first, then pick your plan."; go("profile"); return; }
+  try {
+    const res = await SVC.billing.startCheckout(ui.plan);
+    if (res && res.redirect) { location.href = res.redirect; return; }
+    ui.modal = { plan: ui.plan, state: "confirm" }; render();
+  } catch (e) { toast(e.message); }
+}
+async function pay() {
+  ui.modal.state = "processing"; render();
+  try { user = await SVC.billing.completeDemoPurchase(ui.modal.plan); ui.modal.state = "done"; sfx.win(); }
+  catch (e) { ui.modal = null; toast(e.message); }
+  render();
 }
 
 /* ---------- events ---------- */
@@ -1141,12 +1987,10 @@ function insertChar(c) {
   inp.value = inp.value.slice(0, s) + c + inp.value.slice(e);
   inp.focus(); try { inp.setSelectionRange(s + 1, s + 1); } catch (err) {}
 }
-function act(a, d) {
+async function act(a, d) {
   switch (a) {
-    case "settings": ui.settings = !ui.settings; ui.confirmReset = false; render(); break;
-    case "reset": ui.confirmReset = true; render(); break;
-    case "reset-no": ui.confirmReset = false; render(); break;
-    case "reset-yes": { const auto = P.auto; P = fresh(); P.auto = auto; ui.confirmReset = false; save(); render(); toast("Progress erased."); break; }
+    case "go": go(d.to); break;
+    case "back": if (history.length > 1) history.back(); else go("learn"); break;
     case "start": startBatch(+d.b); break;
     case "review": startReview(); break;
     case "speak": speak(d.say); break;
@@ -1166,10 +2010,28 @@ function act(a, d) {
     case "rematch": resetBoss(); render(); break;
     case "quit": quit(); break;
     case "home": goHome(); break;
+    case "auth-mode": ui.authMode = d.m; ui.authError = ""; render(); break;
+    case "logout": { const n = user ? user.name : ""; await SVC.auth.logOut(); switchUser(null, false); ui.confirmCancel = false; toast("Logged out. Tschüss" + (n ? ", " + n : "") + "!"); go("learn"); break; }
+    case "name-edit": ui.editName = true; ui.nameError = ""; render(); break;
+    case "name-cancel": ui.editName = false; ui.nameError = ""; render(); break;
+    case "pref": PR[d.k] = d.k === "goal" ? +d.v : d.v; savePrefs(); if (d.k === "theme") { applyTheme.touched = true; applyTheme(); } render(); break;
+    case "reset": ui.confirmReset = true; render(); break;
+    case "reset-no": ui.confirmReset = false; render(); break;
+    case "reset-yes": P = fresh(); ui.confirmReset = false; save(); render(); toast("Progress erased."); break;
+    case "plan": ui.plan = d.id; render(); break;
+    case "checkout": checkout(); break;
+    case "pay": pay(); break;
+    case "modal-close": ui.modal = null; render(); break;
+    case "modal-done": ui.modal = null; go("learn"); break;
+    case "cancel-ask": ui.confirmCancel = true; render(); break;
+    case "cancel-no": ui.confirmCancel = false; render(); break;
+    case "cancel-yes": user = await SVC.billing.cancel(); ui.confirmCancel = false; toast("Subscription cancelled. Premium stays on until the end of your period."); render(); break;
+    case "resume": user = await SVC.billing.resume(); toast("Your subscription continues."); render(); break;
   }
 }
 const app = document.getElementById("app");
 app.addEventListener("click", e => {
+  if (ui.modal && e.target.hasAttribute && e.target.hasAttribute("data-modal-back")) { if (ui.modal.state === "confirm") { ui.modal = null; render(); } return; }
   const t = e.target.closest("[data-act]");
   if (!t || t.disabled || !app.contains(t)) return;
   act(t.dataset.act, t.dataset);
@@ -1177,13 +2039,22 @@ app.addEventListener("click", e => {
 app.addEventListener("mousedown", e => { if (e.target.closest(".uml")) e.preventDefault(); });
 app.addEventListener("submit", e => {
   e.preventDefault();
-  if (e.target.id !== "typeform") return;
-  const v = e.target.querySelector("#ans").value;
-  if (v.trim()) submit(v);
+  const id = e.target.id;
+  if (id === "typeform") { const v = e.target.querySelector("#ans").value; if (v.trim()) submit(v); }
+  else if (id === "authform") onAuth(e.target);
+  else if (id === "nameform") onRename(e.target);
 });
-app.addEventListener("change", e => { if (e.target.id === "opt-auto") { P.auto = e.target.checked; save(); } });
+app.addEventListener("change", e => {
+  const id = e.target.id;
+  if (id === "opt-auto") PR.auto = e.target.checked;
+  else if (id === "opt-typing") PR.typing = e.target.checked;
+  else if (id === "opt-sfx") { PR.sfx = e.target.checked; if (PR.sfx) sfx.good(); }
+  else return;
+  savePrefs();
+});
 document.addEventListener("keydown", e => {
-  if (view !== "session" || !S || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.key === "Escape" && ui.modal && ui.modal.state === "confirm") { ui.modal = null; render(); return; }
+  if (route() !== "play" || !S || e.metaKey || e.ctrlKey || e.altKey) return;
   const tag = (e.target.tagName || "").toLowerCase();
   if (tag === "input" || tag === "textarea") return;
   if (S.phase === "deal") {
@@ -1199,15 +2070,9 @@ document.addEventListener("keydown", e => {
 });
 
 /* ---------- boot ---------- */
-function start(data) {
-  try {
-    if (data && data.view === "session" && data.S && data.S.phase) { S = data.S; view = "session"; }
-  } catch (e) { S = null; view = "home"; }
-  render();
-  initRemote();
-}
-try { const h = window.claude && window.claude.hot; if (h && typeof h.snapshot === "function") h.snapshot(() => ({ view, S })); } catch (e) {}
-const hot = window.claude && window.claude.hot;
-if (hot && typeof hot.ready === "function") hot.ready(start); else start((hot && hot.data) || {});
+applyTheme();
+if (route() === "play") { try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {} }
+render();
+initRemote();
 })();
 </script>
