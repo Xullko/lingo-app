@@ -4,6 +4,7 @@ A German → English flashcard game for the 2,000 most useful everyday words.
 You get 3 cards at a time, a quiz right after them, and a boss battle every 10 words.
 
 **Play it:** https://xullko.github.io/lingo-app/
+(also published as a private Claude artifact: https://claude.ai/artifact/D2nR2MG3mdaaFZKM2u6S3U)
 
 ## Features
 
@@ -95,7 +96,8 @@ so going live means replacing what's inside them:
 node build.js
 ```
 
-Then give `dist/lingocards.html` to Claude and ask it to update the artifact.
+Then give `dist/lingocards.html` to Claude and ask it to update the artifact at
+https://claude.ai/artifact/D2nR2MG3mdaaFZKM2u6S3U (pass that link so it keeps the same URL).
 
 ## Saving progress
 
