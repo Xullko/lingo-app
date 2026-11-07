@@ -1,6 +1,6 @@
 /* LingoCards settings. Edit prices, the free tier and links here. */
 window.LINGO_CONFIG = {
-  version: "2.0.0",
+  version: "2.1.0",
 
   // Accounts and payments run in DEMO mode: accounts live only in the browser,
   // passwords are not checked or stored, and checkout never charges anything.

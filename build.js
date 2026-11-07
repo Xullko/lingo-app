@@ -11,11 +11,10 @@ let html = read("index.html");
 
 // Inline the stylesheet and the two scripts.
 html = html.replace('<link rel="stylesheet" href="css/styles.css">', () => "<style>\n" + read("css/styles.css") + "</style>");
-for (const file of ["js/config.js", "js/words.js", "js/services.js", "js/app.js"]) {
-  const tag = '<script src="' + file + '"></script>';
-  if (!html.includes(tag)) throw new Error("index.html is missing " + tag);
-  html = html.replace(tag, () => "<script>\n" + read(file) + "</script>");
-}
+// Inline every local script tag (config, the 10 word levels, services, app) in page order.
+let count = 0;
+html = html.replace(/<script src="(js\/[^"]+)"><\/script>/g, (_, file) => { count++; return "<script>\n" + read(file) + "</script>"; });
+if (!count) throw new Error("No local scripts found in index.html");
 
 // The artifact host adds its own <!doctype>, <head>, charset and viewport,
 // so strip those wrappers and keep only the page content.

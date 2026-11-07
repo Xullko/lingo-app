@@ -247,6 +247,56 @@ mark { background: linear-gradient(transparent 55%, var(--mark) 55%); color: inh
 .speak.sm { width: 32px; height: 32px; }
 .speak.sm svg { width: 15px; height: 15px; }
 
+/* ---------- review badge, due card, levels ---------- */
+.tab-btn { overflow: visible; }
+.tab-badge {
+  position: absolute; top: 4px; left: calc(50% + 6px); min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  display: grid; place-items: center; background: var(--bad); color: var(--card);
+  font-family: var(--f-sign); font-weight: 800; font-size: .72rem; letter-spacing: 0; line-height: 1;
+  box-shadow: 0 0 0 2px var(--card);
+}
+.due-card {
+  width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 14px; cursor: pointer; text-align: left;
+  border: 2px solid var(--accent); background: var(--card); color: var(--ink); box-shadow: var(--shadow);
+}
+.due-card:hover { background: var(--surface); }
+.due-ic { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink); }
+.due-ic svg { width: 24px; height: 24px; }
+.due-text { min-width: 0; display: flex; flex-direction: column; }
+.due-text b { font-family: var(--f-sign); font-weight: 800; font-size: 1.15rem; letter-spacing: .03em; text-transform: uppercase; }
+.due-text span { color: var(--ink-2); font-size: .9rem; }
+.due-card .go { margin-left: auto; flex: none; font-family: var(--f-sign); font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.due-pill { display: inline-block; padding: 2px 8px; border-radius: 999px; background: var(--bad); color: var(--card); font-family: var(--f-sign); letter-spacing: .06em; text-transform: uppercase; }
+.bx-d { font-size: .68rem; color: var(--ink-2); }
+
+.levels { display: flex; flex-direction: column; gap: 10px; }
+.lv-card { border: 1.5px solid var(--line); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.lv-card.open { border-color: var(--accent); background: var(--card); }
+.lv-card.complete .lvl-num { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.lvl-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px 12px 12px 12px; background: none; border: 0; cursor: pointer; text-align: left; }
+.lvl-num {
+  flex: none; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center;
+  font-family: var(--f-sign); font-weight: 800; font-size: 1.25rem; background: var(--sign); color: var(--sign-ink);
+  box-shadow: inset 0 0 0 2px var(--sign), inset 0 0 0 3.5px var(--sign-ink);
+}
+.lvl-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.lvl-t { font-family: var(--f-sign); font-weight: 800; font-size: 1.08rem; letter-spacing: .03em; text-transform: uppercase; }
+.lvl-de { font-size: .82rem; color: var(--ink-2); }
+.lvl-main .bar { height: 6px; margin-top: 2px; }
+.lvl-end { flex: none; }
+.lvl-count { font-family: var(--f-sign); font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+.lvl-done { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--good); color: var(--card); }
+.lvl-done svg { width: 16px; height: 16px; }
+.chev { flex: none; width: 10px; height: 10px; border-right: 2.5px solid var(--ink-2); border-bottom: 2.5px solid var(--ink-2); transform: rotate(45deg) translate(-2px, -2px); transition: transform .2s ease; }
+.lv-card.open .chev { transform: rotate(-135deg) translate(-2px, -2px); }
+.lv-card .route { padding: 0 12px 8px 12px; }
+.tab-pl { background: var(--die); }
+.level-up { margin: 0; display: inline-flex; align-self: center; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: var(--sign); color: var(--sign-ink); font-family: var(--f-sign); font-weight: 800; letter-spacing: .05em; text-transform: uppercase; }
+.level-up svg { width: 18px; height: 18px; }
+.search { font: inherit; font-size: 1rem; padding: 11px 14px; border-radius: 10px; border: 2px solid var(--line); background: var(--surface); color: var(--ink); width: 100%; }
+.search:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--mark); }
+.v-num { grid-column: 2; grid-row: 1 / span 2; font-family: var(--f-sign); font-weight: 700; font-size: .85rem; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+
 /* ---------- premium banner ---------- */
 .pro-banner {
   width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 0; border-radius: 14px; text-align: left; cursor: pointer;

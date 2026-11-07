@@ -3,7 +3,14 @@
 
 const CFG = window.LINGO_CONFIG;
 const SVC = window.LingoServices;
-const DATA = window.LINGO_DATA;
+// The deck lives in js/words/level-XX.js; each file adds one level of 20 batches.
+const LEVELS = (window.LINGO_LEVELS || []).slice().sort((a, b) => a.n - b.n);
+const DATA = [];
+LEVELS.forEach((lv, li) => {
+  lv.start = DATA.length; lv.count = lv.batches.length;
+  lv.batches.forEach(b => DATA.push(Object.assign({ lv: li }, b)));
+});
+const levelStart = i => LEVELS.some(l => l.start === i);
 
 const W = [];
 DATA.forEach((b, bi) => b.w.forEach((r, k) => W.push({
@@ -12,7 +19,10 @@ DATA.forEach((b, bi) => b.w.forEach((r, k) => W.push({
 })));
 
 const GOAL_WORDS = 2000;
-const POS = { noun: "noun", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", interj: "interjection", phrase: "phrase", num: "number", conj: "conjunction" };
+const POS = { noun: "noun", pl: "plural noun", name: "name", verb: "verb", adj: "adjective", adv: "adverb", pron: "pronoun", interj: "interjection", phrase: "phrase", num: "number", conj: "conjunction", prep: "preposition" };
+const CAPITALIZED = ["noun", "pl", "name"];
+const REVIEW_DAYS = [0, 1, 2, 4, 8, 16]; // days until a card in box 1–5 is due again
+const REVIEW_SIZE = 8;
 const GENDER = { der: "masculine", die: "feminine", das: "neuter" };
 const PRAISE = [["Super!", "Great!"], ["Sehr gut!", "Very good!"], ["Genau!", "Exactly!"], ["Prima!", "Nice one!"], ["Toll!", "Brilliant!"], ["Wunderbar!", "Wonderful!"], ["Richtig!", "Correct!"]];
 const TYPE_LABEL = { mcDE: "Multiple choice", mcEN: "Multiple choice", listen: "Listening", fill: "Fill in the blank", type: "Quick translation", article: "der, die or das?" };
@@ -58,6 +68,16 @@ function lev(a, b) {
   return prev[b.length];
 }
 const toTop = () => { try { window.scrollTo(0, 0); } catch (e) {} };
+const isLetter = ch => !!ch && /\p{L}/u.test(ch);
+// Where the word's form appears as a whole word in its example sentence.
+function formIndex(x, f) {
+  let i = x.indexOf(f);
+  while (i >= 0) {
+    if (!isLetter(x[i - 1]) && !isLetter(x[i + f.length])) return i;
+    i = x.indexOf(f, i + 1);
+  }
+  return x.indexOf(f);
+}
 const readJSON = k => { try { const s = localStorage.getItem(k); return s ? JSON.parse(s) : null; } catch (e) { return null; } };
 const writeJSON = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
 const removeKey = k => { try { localStorage.removeItem(k); } catch (e) {} };
@@ -220,9 +240,21 @@ function renderSync() { document.querySelectorAll("[data-sync]").forEach(el => {
 const wordRec = id => P.words["w" + id];
 function learnedIds() { return W.filter(w => { const r = wordRec(w.id); return r && r.b >= 1; }).map(w => w.id); }
 const batchDone = i => !!(P.batches["b" + i] && P.batches["b" + i].done);
-const unlocked = i => i === 0 || batchDone(i - 1);
+// Batches unlock in order, and the first batch of every level is always open so you can jump in.
+const unlocked = i => i === 0 || batchDone(i - 1) || levelStart(i);
 const batchLocked = i => i >= CFG.freeBatches && !premium();
-function nextBatch() { for (let i = 0; i < DATA.length; i++) if (!batchDone(i)) return i; return -1; }
+function nextBatch() {
+  const from = typeof P.lastDone === "number" ? P.lastDone + 1 : 0;
+  for (let i = from; i < DATA.length; i++) if (!batchDone(i)) return i;
+  for (let i = 0; i < DATA.length; i++) if (!batchDone(i)) return i;
+  return -1;
+}
+function dueAt(id) {
+  const r = wordRec(id);
+  if (!r || !r.b) return Infinity;
+  return r.due || ((r.t || 0) + REVIEW_DAYS[Math.min(5, r.b)] * 864e5);
+}
+function dueIds() { const now = Date.now(); return learnedIds().filter(id => dueAt(id) <= now).sort((a, b) => dueAt(a) - dueAt(b)); }
 const todayXP = () => P.days[dayKey()] || 0;
 function dayStreak() {
   let n = 0; const d = new Date();
@@ -259,6 +291,7 @@ function recordWord(id, ok) {
   const r = Object.assign({ b: 0, s: 0, c: 0, t: 0 }, wordRec(id) || {});
   r.s++; r.t = Date.now();
   if (ok) { r.c++; r.b = Math.min(5, Math.max(1, r.b) + 1); } else r.b = 1;
+  r.due = r.t + REVIEW_DAYS[r.b] * 864e5;
   P.words["w" + id] = r;
 }
 
@@ -266,7 +299,8 @@ function recordWord(id, ok) {
 let S = null;
 const ui = {
   confirmReset: false, quitArmed: false, authMode: "login", authError: "", authDraft: {}, authNote: "",
-  after: null, plan: "monthly", modal: null, confirmCancel: false, editName: false, nameError: "", busy: false
+  after: null, plan: "monthly", modal: null, confirmCancel: false, editName: false, nameError: "", busy: false,
+  openLevel: null, vocabQ: "", vocabAll: false, vocabLimit: 60
 };
 let quitT = null, lastView = null;
 const ROUTES = ["learn", "review", "profile", "options", "premium", "play"];
@@ -300,7 +334,7 @@ function assignTypes(ids) {
 }
 function otherType(q) { const all = typesFor(W[q.id]).filter(t => t !== q.type); return shuffle(all)[0] || "mcDE"; }
 function caseLike(v, ref, x) {
-  if (!v || x.p === "noun") return v;
+  if (!v || CAPITALIZED.includes(x.p)) return v;
   const up = ref[0] !== ref[0].toLowerCase();
   return (up ? v[0].toUpperCase() : v[0].toLowerCase()) + v.slice(1);
 }
@@ -330,8 +364,8 @@ function buildQueue(ids) { const types = assignTypes(ids); return ids.map((id, i
 function checkTyped(w, input) {
   let s = norm(input), art = null;
   const m = s.match(/^(der|die|das) (.+)$/);
-  if (m && w.p === "noun") { art = m[1]; s = m[2]; }
-  const targets = [w.w].concat(w.alt).map(norm);
+  if (m && (w.p === "noun" || w.p === "pl")) { art = m[1]; s = m[2]; }
+  const targets = [w.w].concat(w.alt).concat(/^sich /.test(w.w) ? [w.w.slice(5)] : []).map(norm);
   let res = targets.includes(s) ? "ok" : (targets[0].length >= 5 && targets.some(t => lev(t, s) <= 1)) ? "typo" : "no";
   if (res !== "no" && art && art !== w.a) res = "article";
   return res;
@@ -372,7 +406,11 @@ function startBatch(bi) {
 }
 function startReview() {
   if (!premium()) { go("premium"); return; }
-  const ids = learnedIds().sort((a, b) => (wordRec(a).b - wordRec(b).b) || ((wordRec(a).t || 0) - (wordRec(b).t || 0))).slice(0, 6);
+  const due = dueIds();
+  const weakest = learnedIds().filter(id => !due.includes(id))
+    .sort((a, b) => (wordRec(a).b - wordRec(b).b) || ((wordRec(a).t || 0) - (wordRec(b).t || 0)));
+  // Enough due cards: review exactly those. Otherwise top up with the weakest cards.
+  const ids = (due.length >= 3 ? due : due.concat(weakest)).slice(0, REVIEW_SIZE);
   if (ids.length < 3) return;
   S = { mode: "review", ids, phase: "quiz", queue: buildQueue(shuffle(ids)), qi: 0, fb: null, done: 0, total: ids.length, first: 0, xp0: P.xp, runBest: 0, result: null };
   ui.quitArmed = false; go("play");
@@ -463,6 +501,7 @@ function finish() {
   if (S.mode === "batch") {
     const k = "b" + S.bi, prev = P.batches[k];
     P.batches[k] = { done: true, stars: Math.max(stars, (prev && prev.stars) || 0) };
+    P.lastDone = S.bi;
   }
   S.result = { stars, acc, gained: P.xp - S.xp0 };
   S.phase = "results"; save(); render(); toTop();
@@ -499,8 +538,11 @@ function topbarHTML() {
 }
 function tabbarHTML(active) {
   const tabs = [["learn", "Learn", ICON.cards], ["review", "Review", ICON.box], ["profile", user ? "Profile" : "Log in", ICON.user], ["options", "Options", ICON.sliders]];
-  return `<nav class="tabbar" aria-label="Main"><div class="tabbar-in">${tabs.map(([id, label, ic]) =>
-    `<button class="tab-btn ${active === id ? "on" : ""}" data-act="go" data-to="${id}" ${active === id ? 'aria-current="page"' : ""}>${ic}<span>${label}</span></button>`).join("")}</div></nav>`;
+  const due = dueIds().length;
+  return `<nav class="tabbar" aria-label="Main"><div class="tabbar-in">${tabs.map(([id, label, ic]) => {
+    const badge = id === "review" && due ? `<span class="tab-badge" aria-label="${due} due">${due > 99 ? "99+" : due}</span>` : "";
+    return `<button class="tab-btn ${active === id ? "on" : ""}" data-act="go" data-to="${id}" ${active === id ? 'aria-current="page"' : ""}>${ic}${badge}<span>${label}</span></button>`;
+  }).join("")}</div></nav>`;
 }
 function ringHTML(val, max) {
   const r = 42, c = 2 * Math.PI * r, pct = Math.min(1, val / max);
@@ -529,11 +571,21 @@ function learnHTML() {
         <div class="mini mini-wide"><dt>Level ${lv} · ${fmt(P.xp)} XP</dt><dd class="lvl"><span class="bar"><i style="width:${into}%"></i></span><small>${into}/100</small></dd></div>
       </dl>
     </section>
+    ${dueCardHTML()}
     ${nextBlockHTML(nb)}
     ${premium() ? "" : `<button class="pro-banner" data-act="go" data-to="premium"><span class="medal">${ICON.crown}</span>
       <span class="pb-text"><b>LingoCards Premium</b><span>Unlock all ${DATA.length} batches, every boss and review mode.</span></span><span class="go">See plans</span></button>`}
     ${routeHTML()}
     <footer class="foot"><p data-sync>${esc(syncText())}</p></footer>`;
+}
+function dueCardHTML() {
+  const n = dueIds().length;
+  if (!n) return "";
+  const pro = premium();
+  return `<button class="due-card" data-act="${pro ? "review" : "go"}" data-to="review">
+      <span class="due-ic">${ICON.box}</span>
+      <span class="due-text"><b>${n} card${n === 1 ? "" : "s"} due for review</b><span>${pro ? "Review them now to move them up your Leitner box." : "See which words need practice."}</span></span>
+      <span class="go">${pro ? "Review" : "View"}</span></button>`;
 }
 function nextBlockHTML(nb) {
   if (nb < 0) return `<section class="karte has-tab"><span class="tab tab-next">Deck done</span>
@@ -542,36 +594,58 @@ function nextBlockHTML(nb) {
       <p class="next-meta">Keep reviewing to move cards up to box 5, or replay any batch from the route below.</p></section>`;
   const b = DATA[nb];
   if (batchLocked(nb)) return `<section class="karte has-tab next-pro"><span class="tab tab-pro">Premium</span>
-      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
+      <div class="k-head"><span>Level ${b.lv + 1} · Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
       <div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
       <p class="next-meta">You've finished the free batches. Premium unlocks this batch and ${DATA.length - nb - 1} more, with ${(DATA.length - nb) * 10} new words and their bosses.</p>
       <button class="btn btn-sign btn-wide" data-act="go" data-to="premium">${ICON.crown} Unlock with Premium</button></section>`;
   const started = b.w.some((_, k) => wordRec(nb * 10 + k));
   return `<section class="karte has-tab"><span class="tab tab-next">Next up</span>
-      <div class="k-head"><span>Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
+      <div class="k-head"><span>Level ${b.lv + 1} · Batch ${nb + 1} of ${DATA.length}</span><span>Cards ${nb * 10 + 1}–${nb * 10 + 10}</span></div>
       <div class="next-row"><div><h2 class="next-title">${esc(b.t)}</h2><p class="next-de">${esc(b.de)}</p></div>
         <span class="boss-mini" style="--h:${hueOf(b.boss.n)}" title="Boss: ${esc(b.boss.n)}">${b.boss.e}</span></div>
       <p class="next-meta">Starts with <b>${b.w.slice(0, 3).map(r => esc(r[0] ? r[0] + " " + r[1] : r[1])).join(" · ")}</b>. Three rounds of cards and quizzes, then the boss <b>${esc(b.boss.n)}</b>.</p>
       <button class="btn btn-primary btn-wide" data-act="start" data-b="${nb}">${started ? "Restart batch " + (nb + 1) : "Deal the first 3 cards"}</button></section>`;
 }
+function stationHTML(i) {
+  const b = DATA[i], st = P.batches["b" + i], open = unlocked(i), locked = batchLocked(i);
+  const cls = st && st.done ? "done" : locked ? "pro" : open ? "open" : "locked";
+  const end = st && st.done ? `<span aria-label="${st.stars} of 3 stars">${starsHTML(st.stars)}</span>`
+    : locked ? `<span class="badge badge-pro">${ICON.lock}Premium</span>` : open ? (levelStart(i) && i > 0 && !batchDone(i - 1) ? "Jump in" : "Start") : "Locked";
+  const div = i === CFG.freeBatches && !premium() ? `<li class="route-div is-pro"><span>${ICON.crown} Premium from here on</span></li>` : "";
+  return div + `<li class="stn ${cls} ${i >= CFG.freeBatches ? "is-pro" : ""}"><button class="stn-btn" data-act="${locked ? "go" : "start"}" data-to="premium" data-b="${i}" ${open || locked ? "" : "disabled"}>
+      <span class="dot" aria-hidden="true"></span>
+      <span class="stn-main"><span class="stn-t">${i + 1}. ${esc(b.t)}</span><span class="stn-de">${esc(b.de)} · words ${i * 10 + 1}–${i * 10 + 10}</span></span>
+      <span class="stn-end">${end}</span></button></li>`;
+}
 function routeHTML() {
   const doneCount = DATA.filter((_, i) => batchDone(i)).length;
-  const rows = DATA.map((b, i) => {
-    const st = P.batches["b" + i], open = unlocked(i), locked = batchLocked(i);
-    const cls = st && st.done ? "done" : locked ? "pro" : open ? "open" : "locked";
-    const end = st && st.done ? `<span aria-label="${st.stars} of 3 stars">${starsHTML(st.stars)}</span>`
-      : locked ? `<span class="badge badge-pro">${ICON.lock}Premium</span>` : open ? "Start" : "Locked";
-    const div = i === CFG.freeBatches ? `<li class="route-div is-pro"><span>${ICON.crown} Premium line · batches ${i + 1}–${DATA.length}</span></li>` : "";
-    return div + `<li class="stn ${cls} ${i >= CFG.freeBatches ? "is-pro" : ""}"><button class="stn-btn" data-act="${locked ? "go" : "start"}" data-to="premium" data-b="${i}" ${open || locked ? "" : "disabled"}>
-        <span class="dot" aria-hidden="true"></span>
-        <span class="stn-main"><span class="stn-t">${i + 1}. ${esc(b.t)}</span><span class="stn-de">${esc(b.de)} · cards ${i * 10 + 1}–${i * 10 + 10}</span></span>
-        <span class="stn-end">${end}</span></button></li>`;
+  const nb = nextBatch();
+  const openLv = ui.openLevel == null ? (nb >= 0 ? DATA[nb].lv : 0) : ui.openLevel;
+  const levels = LEVELS.map((lv, li) => {
+    const idx = Array.from({ length: lv.count }, (_, k) => lv.start + k);
+    const done = idx.filter(batchDone).length;
+    const stars = idx.reduce((s, i) => s + ((P.batches["b" + i] && P.batches["b" + i].stars) || 0), 0);
+    const proOnly = !premium() && lv.start >= CFG.freeBatches;
+    const isOpen = li === openLv;
+    const status = done === lv.count ? `<span class="lvl-done">${ICON.check}</span>` : proOnly ? `<span class="badge badge-pro">${ICON.lock}Premium</span>` : `<span class="lvl-count">${done}/${lv.count}</span>`;
+    return `<div class="lv-card ${isOpen ? "open" : ""} ${done === lv.count ? "complete" : ""}">
+      <button class="lvl-head" data-act="level" data-l="${li}" aria-expanded="${isOpen}">
+        <span class="lvl-num" aria-hidden="true">${lv.n}</span>
+        <span class="lvl-main"><span class="lvl-t">Level ${lv.n} · ${esc(lv.t)}</span>
+          <span class="lvl-de">${esc(lv.de)} · words ${lv.start * 10 + 1}–${(lv.start + lv.count) * 10}${stars ? ` · ★ ${stars}` : ""}</span>
+          <span class="bar"><i style="width:${(done / lv.count) * 100}%"></i></span></span>
+        <span class="lvl-end">${status}</span>
+        <span class="chev" aria-hidden="true"></span>
+      </button>
+      ${isOpen ? `<ol class="route">${idx.map(stationHTML).join("")}</ol>` : ""}
+    </div>`;
   }).join("");
-  return `<section class="panel" aria-label="Batches">
-      <div class="panel-head"><h3>Your route</h3><span class="muted small">${doneCount} of ${DATA.length} batches done</span></div>
-      <ol class="route">${rows}
-        <li class="stn future"><div class="future-row"><span class="dot" aria-hidden="true"></span><span class="stn-main"><span class="stn-t">Cards ${W.length + 1}–2,000</span><span class="stn-de">Not in this deck yet</span></span></div></li>
-      </ol></section>`;
+  return `<section class="panel" aria-label="Levels">
+      <div class="panel-head"><h3>Your route</h3><span class="muted small">${doneCount} of ${DATA.length} batches · ${fmt(W.length)} words</span></div>
+      <p class="muted small">Batches unlock in order, and you can jump in at the start of any level.</p>
+      <div class="levels">${levels}</div>
+      ${W.length < GOAL_WORDS ? `<p class="muted small center">Words ${fmt(W.length + 1)}–${fmt(GOAL_WORDS)} aren't in this deck yet.</p>` : ""}
+    </section>`;
 }
 
 /* ---------- views: review ---------- */
@@ -580,25 +654,48 @@ function reviewHTML() {
   const boxes = [0, 0, 0, 0, 0];
   learned.forEach(id => { boxes[Math.min(5, wordRec(id).b) - 1]++; });
   const maxBox = Math.max(1, ...boxes);
+  const due = dueIds().length;
+  const size = Math.min(REVIEW_SIZE, learned.length);
   const action = !premium() ? `<button class="btn btn-sign" data-act="go" data-to="premium">${ICON.crown} Unlock review with Premium</button>`
-    : learned.length >= 3 ? `<button class="btn btn-primary" data-act="review">Review my ${Math.min(6, learned.length)} weakest cards</button>`
+    : learned.length >= 3 ? `<button class="btn btn-primary" data-act="review">${due >= 3 ? `Review ${Math.min(due, REVIEW_SIZE)} due cards` : `Practice my ${size} weakest cards`}</button>`
     : `<p class="small"><b>Learn at least 3 words to start reviewing.</b></p>`;
-  const list = learned.slice().sort((a, b) => (wordRec(a).b - wordRec(b).b) || a - b);
   return `<h1 class="view-title">Review<span class="de">Wiederholen</span></h1>
     <section class="panel" aria-label="Leitner box">
-      <div class="panel-head"><h3>Karteikasten</h3><span class="muted small">your Leitner box</span></div>
-      <div class="boxes">${boxes.map((c, i) => `<div class="bx"><span class="bx-n">${c}</span><span class="bx-bar"><i style="height:${(c / maxBox) * 100}%"></i></span><span class="bx-l">Box ${i + 1}</span></div>`).join("")}</div>
-      <p class="muted small">A first-try answer moves a card up one box. A miss sends it back to box 1. Review starts with the lowest boxes.</p>
+      <div class="panel-head"><h3>Karteikasten</h3><span class="muted small">${due ? `<b class="due-pill">${due} due today</b>` : learned.length ? "Nothing due right now" : "your Leitner box"}</span></div>
+      <div class="boxes">${boxes.map((c, i) => `<div class="bx"><span class="bx-n">${c}</span><span class="bx-bar"><i style="height:${(c / maxBox) * 100}%"></i></span><span class="bx-l">Box ${i + 1}</span><span class="bx-d">${REVIEW_DAYS[i + 1]} day${i ? "s" : ""}</span></div>`).join("")}</div>
+      <p class="muted small">A first-try answer moves a card up one box, and higher boxes come back less often. A miss sends it back to box 1, due again tomorrow.</p>
       ${action}
     </section>
-    <section class="panel" aria-label="Your words">
-      <div class="panel-head"><h3>Wortschatz</h3><span class="muted small">${learned.length} words learned</span></div>
-      ${list.length ? `<ul class="vocab">${list.map(id => {
-        const w = W[id], b = wordRec(id).b;
-        return `<li><span class="v-de">${w.a ? `<span class="art art-${w.a}">${w.a}</span> ` : ""}${esc(w.w)}</span><span class="v-en">${esc(w.en)}</span>
-          <span class="boxdots" role="img" aria-label="Box ${b} of 5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= b ? "on" : ""}"></i>`).join("")}</span>${speakBtn(full(w), "sm")}</li>`;
-      }).join("")}</ul>` : `<p class="empty">Words you learn show up here, sorted with the shakiest first. Start with batch 1 on the Learn tab.</p>`}
+    <section class="panel" aria-label="Word list">
+      <div class="panel-head"><h3>Wortschatz</h3><span class="muted small">${learned.length} of ${fmt(W.length)} learned</span></div>
+      <div class="seg" role="group" aria-label="Which words">
+        <button aria-pressed="${!ui.vocabAll}" data-act="vocab-mode" data-all="0">Learned</button>
+        <button aria-pressed="${ui.vocabAll}" data-act="vocab-mode" data-all="1">All ${fmt(W.length)}</button>
+      </div>
+      <label class="sr" for="vocab-q">Search words</label>
+      <input id="vocab-q" class="search" type="search" placeholder="Search in German or English" value="${esc(ui.vocabQ)}" autocomplete="off" spellcheck="false">
+      <div id="vocab-list">${vocabListHTML()}</div>
     </section>`;
+}
+function vocabItems() {
+  const base = ui.vocabAll ? W.map(w => w.id) : learnedIds();
+  const q = norm(ui.vocabQ || "");
+  const list = q ? base.filter(id => norm(full(W[id])).includes(q) || norm(W[id].w).includes(q) || norm(W[id].en).includes(q)) : base;
+  if (!ui.vocabAll) list.sort((a, b) => (wordRec(a).b - wordRec(b).b) || a - b);
+  return list;
+}
+function vocabListHTML() {
+  const list = vocabItems();
+  if (!list.length) {
+    return `<p class="empty">${ui.vocabQ ? "No words match “" + esc(ui.vocabQ) + "”." : "Words you learn show up here, shakiest first. Start with batch 1 on the Learn tab."}</p>`;
+  }
+  const shown = list.slice(0, ui.vocabLimit);
+  return `<ul class="vocab">${shown.map(id => {
+      const w = W[id], r = wordRec(id), b = r && r.b ? r.b : 0;
+      const marker = b ? `<span class="boxdots" role="img" aria-label="Box ${b} of 5">${[1, 2, 3, 4, 5].map(k => `<i class="${k <= b ? "on" : ""}"></i>`).join("")}</span>`
+        : `<span class="v-num">#${w.n}</span>`;
+      return `<li><span class="v-de">${w.a ? `<span class="art art-${w.a}">${w.a}</span> ` : ""}${esc(w.w)}</span><span class="v-en">${esc(w.en)}</span>${marker}${speakBtn(full(w), "sm")}</li>`;
+    }).join("")}</ul>${list.length > shown.length ? `<button class="btn btn-ghost btn-wide" data-act="vocab-more">Show more (${fmt(list.length - shown.length)} left)</button>` : ""}`;
 }
 
 /* ---------- views: account ---------- */
@@ -745,9 +842,9 @@ function sbarHTML() {
 }
 function cardHTML(w, flipped) {
   const g = w.a;
-  const tab = g ? `<span class="tab tab-${g}">${g}</span>` : `<span class="tab">${POS[w.p]}</span>`;
-  const head = `<div class="k-head"><span>🎴 Card ${w.n} / ${fmt(GOAL_WORDS)}</span><span>Category: ${esc(DATA[w.b].t)}</span></div>`;
-  const i = w.x.indexOf(w.f);
+  const tab = w.p === "pl" ? `<span class="tab tab-pl">die · plural</span>` : g ? `<span class="tab tab-${g}">${g}</span>` : `<span class="tab">${POS[w.p]}</span>`;
+  const head = `<div class="k-head"><span>🎴 Card ${fmt(w.n)} / ${fmt(GOAL_WORDS)}</span><span>Category: ${esc(DATA[w.b].t)}</span></div>`;
+  const i = formIndex(w.x, w.f);
   const ex = i < 0 ? esc(w.x) : esc(w.x.slice(0, i)) + "<mark>" + esc(w.f) + "</mark>" + esc(w.x.slice(i + w.f.length));
   return `<div class="flip ${flipped ? "is-flipped" : ""}" role="button" tabindex="0" data-act="flip" aria-label="Flashcard. Press to flip.">
     <div class="flip-inner">
@@ -755,7 +852,7 @@ function cardHTML(w, flipped) {
         <div class="k-body">
           <span class="k-label">Target word</span>
           <div class="k-word">${g ? `<span class="art art-${g}">${g}</span> ` : ""}${esc(w.w)}</div>
-          <div class="k-pos">${POS[w.p]}${g ? " · " + GENDER[g] : ""}</div>
+          <div class="k-pos">${POS[w.p]}${w.p === "noun" && g ? " · " + GENDER[g] : ""}</div>
           <span class="k-label">Pronunciation</span>
           <div class="k-ipa"><span class="ipa">[${esc(w.ipa)}]</span><span class="ph">“${esc(w.ph)}”</span>${speakBtn(full(w))}</div>
         </div>
@@ -790,7 +887,7 @@ function promptHTML(q, w) {
     case "mcEN": return `<h2 class="qprompt">Which German word means “${esc(w.en)}”?</h2>`;
     case "listen": return `<h2 class="qprompt">Listen, then pick the word you hear.</h2><button class="btn btn-sign listen-btn" data-act="speak" data-say="${esc(full(w))}">${ICON.spk} Play the word</button>`;
     case "fill": {
-      const i = w.x.indexOf(w.f);
+      const i = formIndex(w.x, w.f);
       return `<h2 class="qprompt qprompt-de">${esc(w.x.slice(0, i))}<span class="blank ${q.done ? "filled" : ""}">${q.done ? esc(w.f) : '<span class="sr">blank</span>&nbsp;'}</span>${esc(w.x.slice(i + w.f.length))}</h2><p class="qsub">${esc(w.xe)}</p>`;
     }
     case "type": return `<h2 class="qprompt">Type the German for “${esc(w.en)}”</h2>${w.p === "noun" ? '<p class="qsub">The article is optional, but if you add one it has to be right.</p>' : ""}`;
@@ -880,6 +977,8 @@ function resultsHTML() {
     <div class="stamp-wrap"><div class="stamp">${batch ? "Bestanden" : "Geübt"}</div></div>
     <h2>${batch ? "Batch " + (S.bi + 1) + " complete" : "Review complete"}</h2>
     <p class="lede">${batch ? esc(DATA[S.bi].boss.n) + " is defeated, and " + ids.length + " cards are now in your Leitner box." : "Your Leitner box is updated."}</p>
+    ${batch && (() => { const lv = LEVELS[DATA[S.bi].lv]; return Array.from({ length: lv.count }, (_, k) => lv.start + k).every(batchDone); })()
+      ? `<p class="level-up">${ICON.crown} Level ${DATA[S.bi].lv + 1} complete: ${esc(LEVELS[DATA[S.bi].lv].t)}!</p>` : ""}
     <div class="stars" role="img" aria-label="${r.stars} of 3 stars">${starsHTML(r.stars)}</div>
     <dl class="rstats"><div><dt>XP earned</dt><dd>+${r.gained}</dd></div><div><dt>First try</dt><dd>${S.first}/${S.total}</dd></div><div><dt>Best combo</dt><dd>${S.runBest || 0}</dd></div></dl>
     <ul class="wlist">${ids.map(id => `<li><span class="${W[id].a ? "art-" + W[id].a : ""}">${esc(full(W[id]))}</span><span>${esc(W[id].en)}</span></li>`).join("")}</ul>
@@ -1000,6 +1099,9 @@ async function act(a, d) {
     case "reset-no": ui.confirmReset = false; render(); break;
     case "reset-yes": P = fresh(); ui.confirmReset = false; save(); render(); toast("Progress erased."); break;
     case "plan": ui.plan = d.id; render(); break;
+    case "level": { const li = +d.l, cur = ui.openLevel == null ? (nextBatch() >= 0 ? DATA[nextBatch()].lv : 0) : ui.openLevel; ui.openLevel = cur === li ? -1 : li; render(); break; }
+    case "vocab-mode": ui.vocabAll = d.all === "1"; ui.vocabLimit = 60; render(); break;
+    case "vocab-more": { ui.vocabLimit += 100; const box = document.getElementById("vocab-list"); if (box) box.innerHTML = vocabListHTML(); break; }
     case "checkout": checkout(); break;
     case "pay": pay(); break;
     case "modal-close": ui.modal = null; render(); break;
@@ -1024,6 +1126,12 @@ app.addEventListener("submit", e => {
   if (id === "typeform") { const v = e.target.querySelector("#ans").value; if (v.trim()) submit(v); }
   else if (id === "authform") onAuth(e.target);
   else if (id === "nameform") onRename(e.target);
+});
+app.addEventListener("input", e => {
+  if (e.target.id !== "vocab-q") return;
+  ui.vocabQ = e.target.value; ui.vocabLimit = 60;
+  const box = document.getElementById("vocab-list");
+  if (box) box.innerHTML = vocabListHTML();
 });
 app.addEventListener("change", e => {
   const id = e.target.id;
